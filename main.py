@@ -28,12 +28,15 @@ def menu():
             if tipo == "1":
                 auto = AutoNuevo(marca, modelo, precio)
             elif tipo == "2":
-                auto = AutoUsado(marca, modelo, precio)
+                kilometraje = int(input("Ingrese el kilometraje: "))
+                auto = AutoUsado(marca, modelo, precio, kilometraje)
             elif tipo == "3":
-                auto = AutoElectrico(marca, modelo, precio)
+                autonomia = int(input("Ingrese la autonomía de la batería (km): "))
+                auto = AutoElectrico(marca, modelo, precio, autonomia)
             else:
                 print("Tipo inválido.")
                 continue
+
 
             concesionario.comprar_auto(auto)
 
