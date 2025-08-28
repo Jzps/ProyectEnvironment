@@ -28,9 +28,11 @@ def menu():
             if tipo == "1":
                 auto = AutoNuevo(marca, modelo, precio)
             elif tipo == "2":
-                auto = AutoUsado(marca, modelo, precio)
+                kilometraje = int(input("Ingrese el kilometraje: "))
+                auto = AutoUsado(marca, modelo, precio, kilometraje)
             elif tipo == "3":
-                auto = AutoElectrico(marca, modelo, precio)
+                autonomia = int(input("Ingrese la autonomía de la batería (km): "))
+                auto = AutoElectrico(marca, modelo, precio, autonomia)
             else:
                 print("Tipo inválido.")
                 continue
@@ -40,7 +42,7 @@ def menu():
         elif opcion == "2":
             concesionario.mostrar_autos()
             if concesionario.autos:
-                indice = int(input("Ingrese el índice del auto a vender: "))- 1
+                indice = int(input("Ingrese el índice del auto a vender: ")) - 1
                 concesionario.vender_auto(indice)
 
         elif opcion == "3":
@@ -49,7 +51,7 @@ def menu():
         elif opcion == "4":
             concesionario.mostrar_autos()
             if concesionario.autos:
-                indice = int(input("Ingrese el índice del auto para dar mantenimiento: "))- 1
+                indice = int(input("Ingrese el índice del auto para dar mantenimiento: ")) - 1
                 concesionario.dar_mantenimiento(indice)
 
         elif opcion == "5":

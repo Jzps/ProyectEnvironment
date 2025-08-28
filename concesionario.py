@@ -17,7 +17,7 @@ class Concesionario:
         if not self.autos:
             print("No hay autos en el concesionario.")
         else:
-            for i, auto in enumerate(self.autos, start = 1):
+            for i, auto in enumerate(self.autos, start=1):
                 print(f"{i}. {auto.mostrar_info()}")
 
     def dar_mantenimiento(self, indice):
