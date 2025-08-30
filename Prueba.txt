@@ -1,0 +1,31 @@
+## Ya que en este programa no se permite utilizar try y catch para manejar errores al ingresar datos,
+    se busco implementar un mecanismo de validación previa de entradas.
+    En lugar de convertir directamente 
+    la entrada con int() o float() (lo que rompería el programa si el usuario escribe letras u otros caracteres no numéricos),
+    se crearon funciones como pedir_entero() y pedir_flotante().##
+
+--- ACLARACION ESTA IDEA NO ES PROPIA ES CREACION DE UNA AI ---
+
+def pedir_entero(mensaje):
+    valor = input(mensaje)
+    while not valor.isdigit():   # verifica que la entrada tenga solo dígitos
+        print(" Valor inválido, ingrese un número válido.")
+        valor = input(mensaje)
+    return int(valor)
+
+def pedir_flotante(mensaje):
+    valor = input(mensaje)
+    while True:
+        # Permitimos números con decimales usando un truco
+        if valor.replace(".", "", 1).isdigit():
+            return float(valor)
+        else:
+            print(" Valor inválido, ingrese un número válido.")
+            valor = input(mensaje)
+
+## Podriamos pasar de esto
+    precio = float(input("Ingrese el precio: "))
+
+## a esto
+    precio = pedir_flotante("Ingrese el precio: ")
+    opcion = pedir_entero("Seleccione una opción: ")
