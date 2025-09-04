@@ -1,0 +1,37 @@
+class Auto:
+    def __init__(self, marca, modelo, precio):
+        self.marca = marca
+        self.modelo = modelo
+        self.precio = precio
+
+    def mostrar_info(self):
+        return f"Marca: {self.marca}, Modelo: {self.modelo}, Precio: ${self.precio}"
+
+
+class AutoNuevo(Auto):
+    def dar_mantenimiento(self):
+        return f"El auto nuevo {self.marca} {self.modelo} recibió revisión básica."
+
+
+class AutoUsado(Auto):
+    def __init__(self, marca, modelo, precio, kilometraje):
+        super().__init__(marca, modelo, precio)
+        self.kilometraje = kilometraje
+
+    def mostrar_info(self):
+        return super().mostrar_info() + f", Kilometraje: {self.kilometraje} km"
+
+    def dar_mantenimiento(self):
+        return f"El auto usado {self.marca} {self.modelo} recibió cambio de aceite."
+
+
+class AutoElectrico(Auto):
+    def __init__(self, marca, modelo, precio, autonomia):
+        super().__init__(marca, modelo, precio)
+        self.autonomia = autonomia
+
+    def mostrar_info(self):
+        return super().mostrar_info() + f", Autonomía: {self.autonomia} km"
+
+    def dar_mantenimiento(self):
+        return f"El auto eléctrico {self.marca} {self.modelo} recibió revisión de batería."

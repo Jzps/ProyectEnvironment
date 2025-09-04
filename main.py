@@ -1,5 +1,9 @@
-from tipos_autos import AutoNuevo, AutoUsado, AutoElectrico
-from concesionario import Concesionario
+from database.database import init_db
+from services.concesionario import Concesionario
+from autos.tipos import AutoNuevo, AutoUsado, AutoElectrico
+
+# Crear tablas
+init_db()
 
 def menu():
     concesionario = Concesionario()
@@ -26,33 +30,31 @@ def menu():
             precio = float(input("Ingrese el precio: "))
 
             if tipo == "1":
-                auto = AutoNuevo(marca, modelo, precio)
+                auto_obj = AutoNuevo(marca, modelo, precio)
             elif tipo == "2":
                 kilometraje = int(input("Ingrese el kilometraje: "))
-                auto = AutoUsado(marca, modelo, precio, kilometraje)
+                auto_obj = AutoUsado(marca, modelo, precio, kilometraje)
             elif tipo == "3":
-                autonomia = int(input("Ingrese la autonomía de la batería (km): "))
-                auto = AutoElectrico(marca, modelo, precio, autonomia)
+                autonomia = int(input("Ingrese la autonomía (km): "))
+                auto_obj = AutoElectrico(marca, modelo, precio, autonomia)
             else:
                 print("Tipo inválido.")
                 continue
 
-            concesionario.comprar_auto(auto)
+            concesionario.comprar_auto(auto_obj)
 
         elif opcion == "2":
             concesionario.mostrar_autos()
-            if concesionario.autos:
-                indice = int(input("Ingrese el índice del auto a vender: ")) - 1
-                concesionario.vender_auto(indice)
+            auto_id = int(input("Ingrese el número del auto a vender: "))
+            concesionario.vender_auto(auto_id)
 
         elif opcion == "3":
             concesionario.mostrar_autos()
 
         elif opcion == "4":
             concesionario.mostrar_autos()
-            if concesionario.autos:
-                indice = int(input("Ingrese el índice del auto para dar mantenimiento: ")) - 1
-                concesionario.dar_mantenimiento(indice)
+            auto_id = int(input("Ingrese el número del auto para dar mantenimiento: "))
+            concesionario.dar_mantenimiento(auto_id)
 
         elif opcion == "5":
             print("Saliendo del programa...")
