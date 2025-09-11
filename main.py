@@ -10,13 +10,8 @@ from autos.tipos import AutoNuevo, AutoUsado, AutoElectrico
 from schemas import ClienteCreate, EmpleadoCreate, VendedorCreate, MantenimientoEmpleadoCreate, MantenimientoCreate, FacturaCreate
 from datetime import date
 
-# Crear tablas
 init_db()
 
-
-# ==============================
-# Submenús
-# ==============================
 
 def menu_clientes():
     cliente_service = ClienteService()
@@ -196,10 +191,6 @@ def menu_facturas():
             print("Opción inválida.")
 
 
-# ==============================
-# Menú principal
-# ==============================
-
 def menu():
     concesionario = Concesionario()
 
@@ -215,7 +206,7 @@ def menu():
         opcion = input("Seleccione una opción: ")
 
         if opcion == "1":
-            # Reutilizamos tu menú de autos original
+            
             while True:
                 print("\n--- MENÚ CONCESIONARIO ---")
                 print("1. Comprar Auto")
