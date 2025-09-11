@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, Table, ForeignKey
 from database.config import Base
 
-# Tabla intermedia N:M entre técnicos de mantenimiento y especialidades
 empleado_mantenimiento_especialidad = Table(
     "empleado_mantenimiento_especialidad",
     Base.metadata,
