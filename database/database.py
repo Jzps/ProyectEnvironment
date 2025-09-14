@@ -1,7 +1,6 @@
 from database.config import Base, engine
-
 from database.entities import (
-    auto,              
+    auto,
     cliente,
     concesionario,
     empleado,
@@ -11,6 +10,7 @@ from database.entities import (
     mantenimiento,
     factura,
 )
+
 
 def init_db():
     Base.metadata.create_all(bind=engine)

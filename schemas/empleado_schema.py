@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import date
 
+
 class EmpleadoBase(BaseModel):
     nombre: str
     apellido: str
@@ -10,8 +11,10 @@ class EmpleadoBase(BaseModel):
     fecha_contratacion: date | None = None
     concesionario_id: int | None = None
 
+
 class EmpleadoCreate(EmpleadoBase):
     pass
+
 
 class EmpleadoOut(EmpleadoBase):
     id: int
@@ -20,9 +23,9 @@ class EmpleadoOut(EmpleadoBase):
         orm_mode = True
 
 
-# --- Vendedor ---
 class VendedorCreate(BaseModel):
     empleado_id: int
+
 
 class VendedorOut(BaseModel):
     empleado_id: int
@@ -31,10 +34,10 @@ class VendedorOut(BaseModel):
         orm_mode = True
 
 
-# --- Técnico de mantenimiento ---
 class MantenimientoEmpleadoCreate(BaseModel):
     empleado_id: int
-    tipo_carro: str   # AutoNuevo | AutoUsado | AutoElectrico
+    tipo_carro: str
+
 
 class MantenimientoEmpleadoOut(MantenimientoEmpleadoCreate):
     class Config:

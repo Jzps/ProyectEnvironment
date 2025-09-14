@@ -1,4 +1,2 @@
-from .config import Base, SessionLocal, engine
+from .config import Base, engine, SessionLocal
 from .database import init_db
-
-__all__ = ["Base", "SessionLocal", "engine", "init_db"]
