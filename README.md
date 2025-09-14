@@ -13,6 +13,7 @@ tipos_autos.py # Clases específicas: AutoNuevo, AutoUsado, AutoElectrico
 concesionario.py # Clase Concesionario que gestiona los autos
 main.py # Menú principal (punto de entrada)
 README.md # Este archivo
+Prueba.txt lugar donde compartir ideas a implementar
 
 ---
 
