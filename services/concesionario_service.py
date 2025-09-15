@@ -2,17 +2,22 @@ from database.config import SessionLocal
 from crud import auto_crud
 from schemas.auto_schema import AutoCreate
 from autos import AutoNuevo, AutoUsado, AutoElectrico
-from services import ClienteService, EmpleadoService, MantenimientoService
+from services import ClienteService, EmpleadoService, MantenimientoService, FacturaService
 from schemas import MantenimientoCreate
 from datetime import date
 
 
+
 class Concesionario:
-    def __init__(self):
-        self.db = SessionLocal()
-        self.cliente_service = ClienteService()
-        self.empleado_service = EmpleadoService()
-        self.mantenimiento_service = MantenimientoService()
+    def __init__(self, db=None):
+        if db is None:
+            self.db = SessionLocal()
+        else:
+            self.db = db
+        self.cliente_service = ClienteService(self.db)
+        self.empleado_service = EmpleadoService(self.db)
+        self.mantenimiento_service = MantenimientoService(self.db)
+        self.factura_service = FacturaService(self.db)
 
     def comprar_auto(self, auto):
         auto_schema = AutoCreate(

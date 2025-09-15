@@ -25,10 +25,10 @@ from datetime import date
 
 
 init_db()
+db = SessionLocal()
 
-
-def menu_clientes():
-    cliente_service = ClienteService()
+def menu_clientes(db):
+    cliente_service = ClienteService(db)  # ahora usa la misma sesión
     while True:
         print("\n--- MENÚ CLIENTES ---")
         print("1. Registrar Cliente")
@@ -73,8 +73,8 @@ def menu_clientes():
             print("Opción inválida.")
 
 
-def menu_empleados():
-    empleado_service = EmpleadoService()
+def menu_empleados(db):
+    empleado_service = EmpleadoService(db)
     while True:
         print("\n--- MENÚ EMPLEADOS ---")
         print("1. Registrar Empleado")
@@ -135,8 +135,8 @@ def menu_empleados():
             print("Opción inválida.")
 
 
-def menu_mantenimientos():
-    mantenimiento_service = MantenimientoService()
+def menu_mantenimientos(db):
+    mantenimiento_service = MantenimientoService(db)
     while True:
         print("\n--- MENÚ MANTENIMIENTOS ---")
         print("1. Listar Mantenimientos")
@@ -160,8 +160,8 @@ def menu_mantenimientos():
             print("Opción inválida.")
 
 
-def menu_facturas():
-    factura_service = FacturaService()
+def menu_facturas(db):
+    factura_service = FacturaService(db)
     while True:
         print("\n--- MENÚ FACTURAS ---")
         print("1. Crear Factura")
@@ -206,8 +206,8 @@ def menu_facturas():
             print("Opción inválida.")
 
 
-def menu():
-    concesionario = Concesionario()
+def menu(db):
+    concesionario = Concesionario(db)
 
     while True:
         print("\n=== MENÚ PRINCIPAL ===")
@@ -285,13 +285,13 @@ def menu():
                     print("Opción inválida.")
 
         elif opcion == "2":
-            menu_clientes()
+            menu_clientes(db)
         elif opcion == "3":
-            menu_empleados()
+            menu_empleados(db)
         elif opcion == "4":
-            menu_mantenimientos()
+            menu_mantenimientos(db)
         elif opcion == "5":
-            menu_facturas()
+            menu_facturas(db)
         elif opcion == "6":
             print("Saliendo del programa...")
             break
@@ -320,6 +320,6 @@ if __name__ == "__main__":
 
         if admin_service.login(username, password):
             print(f" Bienvenido {username}")
-            menu()
+            menu(db)
         else:
             print(" Credenciales incorrectas. Saliendo...")

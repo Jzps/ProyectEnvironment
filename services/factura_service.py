@@ -4,16 +4,19 @@ from schemas.factura_schema import FacturaCreate
 
 
 class FacturaService:
-    def __init__(self):
-        self.db = SessionLocal()
+    def __init__(self, db=None):
+        if db is None:
+            self.db = SessionLocal()
+        else:
+            self.db = db
 
     def crear_factura(self, factura: FacturaCreate):
         auto = auto_crud.obtener_auto_por_id(self.db, factura.auto_id)
         if not auto:
-            print("❌ El auto no existe.")
+            print("El auto no existe.")
             return None
         if not auto.vendido:
-            print("❌ Solo se pueden facturar autos vendidos.")
+            print("Solo se pueden facturar autos vendidos.")
             return None
 
         mantenimientos = mantenimiento_crud.obtener_mantenimientos_por_auto(
@@ -26,8 +29,7 @@ class FacturaService:
         )
         factura.costo_mantenimiento = costo_mantenimiento_total
 
-        factura_db = factura_crud.crear_factura(self.db, factura)
-        return factura_db
+        return factura_crud.crear_factura(self.db, factura)
 
     def listar_facturas(self):
         return factura_crud.obtener_facturas(self.db)

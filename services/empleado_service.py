@@ -3,8 +3,11 @@ from crud import empleado_crud
 from schemas import EmpleadoCreate, VendedorCreate, MantenimientoEmpleadoCreate
 
 class EmpleadoService:
-    def __init__(self):
-        self.db = SessionLocal()
+    def __init__(self, db=None):
+        if db is None:
+            self.db = SessionLocal()
+        else:
+            self.db = db
 
     def registrar_empleado(self, empleado: EmpleadoCreate):
         return empleado_crud.crear_empleado(self.db, empleado)
