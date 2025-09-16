@@ -18,15 +18,15 @@ def test_connection():
             version = result.fetchone()
             print(f"[OK] Version de PostgreSQL: {version[0]}")
 
-            result = connection.execute(
-                text("SELECT current_database()")
-            )
+            result = connection.execute(text("SELECT current_database()"))
             db_name = result.fetchone()
             print(f"[OK] Conectado a la base de datos: {db_name[0]}")
 
             print("\nTablas disponibles en 'public':")
             result = connection.execute(
-                text("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
+                text(
+                    "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
+                )
             )
             tables = result.fetchall()
             if tables:
@@ -45,6 +45,7 @@ def test_connection():
         return False
 
     return True
+
 
 if __name__ == "__main__":
     print("Iniciando prueba de conexion...\n")

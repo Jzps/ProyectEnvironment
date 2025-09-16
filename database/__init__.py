@@ -1,5 +1,5 @@
 from .config import engine, SessionLocal
-from .init_db import init_db  # importamos la función init_db
+from .init_db import init_db
 from .entities.auto import Auto
 from .entities.cliente import Cliente
 from .entities.concesionario import Concesionario

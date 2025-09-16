@@ -2,6 +2,7 @@ from database.config import SessionLocal
 from crud import empleado_crud
 from schemas import EmpleadoCreate, VendedorCreate, MantenimientoEmpleadoCreate
 
+
 class EmpleadoService:
     def __init__(self, db=None):
         if db is None:

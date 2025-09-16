@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import date
 
+
 class FacturaBase(BaseModel):
     fecha_emision: date
     cliente_id: int
@@ -12,8 +13,10 @@ class FacturaBase(BaseModel):
     total: float
     observaciones: str | None = None
 
+
 class FacturaCreate(FacturaBase):
     pass
+
 
 class FacturaOut(FacturaBase):
     id: int

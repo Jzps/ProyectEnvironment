@@ -1,11 +1,14 @@
 from database.config import SessionLocal
 from crud import auto_crud
 from schemas.auto_schema import AutoCreate
-from autos import AutoNuevo, AutoUsado, AutoElectrico
-from services import ClienteService, EmpleadoService, MantenimientoService, FacturaService
-from schemas import MantenimientoCreate
+from services import (
+    ClienteService,
+    EmpleadoService,
+    MantenimientoService,
+    FacturaService,
+)
+from schemas import MantenimientoCreate, FacturaCreate
 from datetime import date
-
 
 
 class Concesionario:
@@ -20,6 +23,7 @@ class Concesionario:
         self.factura_service = FacturaService(self.db)
 
     def comprar_auto(self, auto):
+        """Registrar un auto nuevo en inventario"""
         auto_schema = AutoCreate(
             marca=auto.marca,
             modelo=auto.modelo,
@@ -31,6 +35,7 @@ class Concesionario:
         print(f"Se ha comprado: {auto.mostrar_info()}")
 
     def mostrar_autos(self):
+        """Mostrar autos disponibles en el concesionario"""
         autos = auto_crud.obtener_autos(self.db, disponibles_only=True)
         if not autos:
             print("No hay autos disponibles.")
@@ -40,6 +45,7 @@ class Concesionario:
         return autos
 
     def mostrar_autos_vendidos(self):
+        """Mostrar autos que ya fueron vendidos"""
         autos = auto_crud.obtener_autos_vendidos(self.db)
         if not autos:
             print("No hay autos vendidos.")
@@ -49,6 +55,7 @@ class Concesionario:
             print(f"{a.id}. {a.marca} {a.modelo} ({a.tipo}) - ${a.precio}")
 
     def vender_auto(self, indice: int):
+        """Vender un auto → registrar venta + generar factura automáticamente"""
         autos = auto_crud.obtener_autos(self.db, disponibles_only=True)
         if not (0 <= indice - 1 < len(autos)):
             print("Índice inválido, no se pudo vender el auto.")
@@ -59,20 +66,21 @@ class Concesionario:
 
         clientes = self.cliente_service.listar_clientes()
         if not clientes:
-            print(" No hay clientes registrados. Registre un cliente antes de vender.")
+            print("No hay clientes registrados. Registre un cliente antes de vender.")
             return
         print("\n--- CLIENTES ---")
         for c in clientes:
             print(f"{c.id}. {c.nombre} {c.apellido} - DNI: {c.dni}")
         cliente_id = int(input("Ingrese el ID del cliente comprador: "))
-        if not any(c.id == cliente_id for c in clientes):
+        cliente = next((c for c in clientes if c.id == cliente_id), None)
+        if not cliente:
             print("Cliente inválido.")
             return
 
         vendedores = self.empleado_service.listar_vendedores()
         if not vendedores:
             print(
-                " No hay vendedores registrados. Registre un vendedor antes de vender."
+                "No hay vendedores registrados. Registre un vendedor antes de vender."
             )
             return
 
@@ -88,16 +96,46 @@ class Concesionario:
                 print(f"{v.empleado_id}. (Empleado ID {v.empleado_id})")
 
         vendedor_id = int(input("Ingrese el ID del vendedor: "))
-        if not any(v.empleado_id == vendedor_id for v in vendedores):
+        vendedor_emp = next(
+            (
+                emp_map.get(v.empleado_id)
+                for v in vendedores
+                if v.empleado_id == vendedor_id
+            ),
+            None,
+        )
+        if not vendedor_emp:
             print("Vendedor inválido.")
             return
 
         auto_crud.marcar_vendido(self.db, auto.id)
-        print(
-            f" Auto '{auto.marca} {auto.modelo}' marcado como vendido. Genere la factura desde el menú de facturas."
+
+        factura = self.factura_service.crear_factura(
+            FacturaCreate(
+                fecha_emision=date.today(),
+                cliente_id=cliente.id,
+                empleado_id=vendedor_id,
+                auto_id=auto.id,
+                precio_carro_base=auto.precio,
+                costo_mantenimiento=0.0,
+                descuento=0.0,
+                total=0.0,
+                observaciones="Factura generada automáticamente al vender el auto",
+            )
         )
 
+        print("\n--- FACTURA GENERADA ---")
+        print(f"Factura ID: {factura.id}")
+        print(f"Fecha: {factura.fecha_emision}")
+        print(f"Cliente: {cliente.nombre} {cliente.apellido} - DNI {cliente.dni}")
+        print(f"Vendedor: {vendedor_emp.nombre} {vendedor_emp.apellido}")
+        print(f"Auto: {auto.marca} {auto.modelo} ({auto.tipo})")
+        print(f"Precio: ${auto.precio}")
+        print(f"Total: ${factura.total}")
+        print("--------------------------")
+
     def dar_mantenimiento(self, indice: int):
+        """Asignar mantenimiento a un auto"""
         autos_all = auto_crud.obtener_autos(self.db, disponibles_only=False)
         if not autos_all:
             print("No hay autos registrados para mantenimiento.")
@@ -114,7 +152,7 @@ class Concesionario:
 
         tecnicos = self.empleado_service.listar_tecnicos()
         if not tecnicos:
-            print(" No hay técnicos de mantenimiento registrados. Registre uno antes.")
+            print("No hay técnicos de mantenimiento registrados. Registre uno antes.")
             return
 
         empleados = self.empleado_service.listar_empleados()
@@ -151,5 +189,5 @@ class Concesionario:
         )
         self.mantenimiento_service.registrar_mantenimiento(mant)
         print(
-            f" Mantenimiento registrado para {auto_db.marca} {auto_db.modelo} (${costo})."
+            f"Mantenimiento registrado para {auto_db.marca} {auto_db.modelo} (${costo})."
         )

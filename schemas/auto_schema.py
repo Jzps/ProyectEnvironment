@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class AutoBase(BaseModel):
     marca: str
     modelo: str
@@ -7,8 +8,10 @@ class AutoBase(BaseModel):
     tipo: str
     extra: str | None = None
 
+
 class AutoCreate(AutoBase):
     pass
+
 
 class AutoOut(AutoBase):
     id: int

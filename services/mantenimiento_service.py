@@ -2,6 +2,7 @@ from database.config import SessionLocal
 from crud import mantenimiento_crud
 from schemas import MantenimientoCreate
 
+
 class MantenimientoService:
     def __init__(self, db=None):
         if db is None:

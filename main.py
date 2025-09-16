@@ -1,14 +1,9 @@
-import warnings
-
-warnings.filterwarnings("ignore", category=UserWarning)
-
 from database import SessionLocal, init_db
 from services import (
     Concesionario,
     ClienteService,
     EmpleadoService,
     MantenimientoService,
-    FacturaService,
 )
 from services.admin_service import AdminService
 from autos.tipos import AutoNuevo, AutoUsado, AutoElectrico
@@ -17,18 +12,17 @@ from schemas import (
     EmpleadoCreate,
     VendedorCreate,
     MantenimientoEmpleadoCreate,
-    MantenimientoCreate,
-    FacturaCreate,
     AdminCreate,
 )
 from datetime import date
 
-
 init_db()
 db = SessionLocal()
 
+
 def menu_clientes(db):
-    cliente_service = ClienteService(db)  # ahora usa la misma sesión
+    """Menú para gestionar clientes"""
+    cliente_service = ClienteService(db)
     while True:
         print("\n--- MENÚ CLIENTES ---")
         print("1. Registrar Cliente")
@@ -59,8 +53,11 @@ def menu_clientes(db):
 
         elif opcion == "2":
             clientes = cliente_service.listar_clientes()
-            for c in clientes:
-                print(f"{c.id}. {c.nombre} {c.apellido} - DNI: {c.dni}")
+            if not clientes:
+                print("No hay clientes registrados.")
+            else:
+                for c in clientes:
+                    print(f"{c.id}. {c.nombre} {c.apellido} - DNI: {c.dni}")
 
         elif opcion == "3":
             cliente_id = int(input("ID de cliente a eliminar: "))
@@ -74,6 +71,7 @@ def menu_clientes(db):
 
 
 def menu_empleados(db):
+
     empleado_service = EmpleadoService(db)
     while True:
         print("\n--- MENÚ EMPLEADOS ---")
@@ -113,21 +111,59 @@ def menu_empleados(db):
                     print(f"{e.id}. {e.nombre} {e.apellido} - DNI: {e.dni}")
 
         elif opcion == "3":
-            empleado_id = int(input("ID de empleado a registrar como vendedor: "))
-            vendedor = VendedorCreate(empleado_id=empleado_id)
-            empleado_service.registrar_vendedor(vendedor)
-            print("Empleado registrado como Vendedor.")
+            empleados = empleado_service.listar_empleados()
+            vendedores = empleado_service.listar_vendedores()
+            ids_vendedores = {v.empleado_id for v in vendedores}
+
+            disponibles = [e for e in empleados if e.id not in ids_vendedores]
+
+            if not disponibles:
+                print("No hay empleados disponibles para registrar como vendedores.")
+            else:
+                print("\n--- EMPLEADOS DISPONIBLES ---")
+                for i, e in enumerate(disponibles, start=1):
+                    print(f"{i}. {e.nombre} {e.apellido} - DNI: {e.dni}")
+
+                opcion = int(input("Seleccione el número del empleado: "))
+                if 1 <= opcion <= len(disponibles):
+                    empleado = disponibles[opcion - 1]
+                    vendedor = VendedorCreate(empleado_id=empleado.id)
+                    empleado_service.registrar_vendedor(vendedor)
+                    print(
+                        f"Empleado {empleado.nombre} {empleado.apellido} registrado como Vendedor."
+                    )
+                else:
+                    print("Opción inválida.")
 
         elif opcion == "4":
-            empleado_id = int(input("ID de empleado a registrar como técnico: "))
-            tipo_carro = input(
-                "Tipo de carro que atiende (AutoNuevo, AutoUsado, AutoElectrico): "
-            )
-            tecnico = MantenimientoEmpleadoCreate(
-                empleado_id=empleado_id, tipo_carro=tipo_carro
-            )
-            empleado_service.registrar_tecnico(tecnico)
-            print("Empleado registrado como Técnico de Mantenimiento.")
+            empleados = empleado_service.listar_empleados()
+            tecnicos = empleado_service.listar_tecnicos()
+            ids_tecnicos = {t.empleado_id for t in tecnicos}
+
+            disponibles = [e for e in empleados if e.id not in ids_tecnicos]
+
+            if not disponibles:
+                print("No hay empleados disponibles para registrar como técnicos.")
+            else:
+                print("\n--- EMPLEADOS DISPONIBLES ---")
+                for i, e in enumerate(disponibles, start=1):
+                    print(f"{i}. {e.nombre} {e.apellido} - DNI: {e.dni}")
+
+                opcion = int(input("Seleccione el número del empleado: "))
+                if 1 <= opcion <= len(disponibles):
+                    empleado = disponibles[opcion - 1]
+                    tipo_carro = input(
+                        "Tipo de carro que atiende (AutoNuevo, AutoUsado, AutoElectrico): "
+                    )
+                    tecnico = MantenimientoEmpleadoCreate(
+                        empleado_id=empleado.id, tipo_carro=tipo_carro
+                    )
+                    empleado_service.registrar_tecnico(tecnico)
+                    print(
+                        f"Empleado {empleado.nombre} {empleado.apellido} registrado como Técnico de Mantenimiento."
+                    )
+                else:
+                    print("Opción inválida.")
 
         elif opcion == "5":
             break
@@ -136,6 +172,7 @@ def menu_empleados(db):
 
 
 def menu_mantenimientos(db):
+    """Menú para mostrar mantenimientos registrados"""
     mantenimiento_service = MantenimientoService(db)
     while True:
         print("\n--- MENÚ MANTENIMIENTOS ---")
@@ -160,53 +197,8 @@ def menu_mantenimientos(db):
             print("Opción inválida.")
 
 
-def menu_facturas(db):
-    factura_service = FacturaService(db)
-    while True:
-        print("\n--- MENÚ FACTURAS ---")
-        print("1. Crear Factura")
-        print("2. Listar Facturas")
-        print("3. Volver")
-
-        opcion = input("Seleccione una opción: ")
-
-        if opcion == "1":
-            cliente_id = int(input("ID Cliente: "))
-            empleado_id = int(input("ID Vendedor: "))
-            auto_id = int(input("ID Auto: "))
-            precio_base = float(input("Precio base del auto: "))
-            descuento = float(input("Descuento: "))
-            observaciones = input("Observaciones: ")
-
-            factura = FacturaCreate(
-                fecha_emision=date.today(),
-                cliente_id=cliente_id,
-                empleado_id=empleado_id,
-                auto_id=auto_id,
-                precio_carro_base=precio_base,
-                costo_mantenimiento=0.0,
-                descuento=descuento,
-                total=0.0,
-                observaciones=observaciones,
-            )
-            factura_db = factura_service.crear_factura(factura)
-            if factura_db:
-                print(f"Factura creada. Total = ${factura_db.total}")
-
-        elif opcion == "2":
-            facturas = factura_service.listar_facturas()
-            for f in facturas:
-                print(
-                    f"{f.id}. Cliente {f.cliente_id} Auto {f.auto_id} Total: ${f.total}"
-                )
-
-        elif opcion == "3":
-            break
-        else:
-            print("Opción inválida.")
-
-
 def menu(db):
+    """Menú principal del sistema"""
     concesionario = Concesionario(db)
 
     while True:
@@ -215,8 +207,7 @@ def menu(db):
         print("2. Clientes")
         print("3. Empleados")
         print("4. Mantenimientos")
-        print("5. Facturas")
-        print("6. Salir")
+        print("5. Salir")
 
         opcion = input("Seleccione una opción: ")
 
@@ -291,8 +282,6 @@ def menu(db):
         elif opcion == "4":
             menu_mantenimientos(db)
         elif opcion == "5":
-            menu_facturas(db)
-        elif opcion == "6":
             print("Saliendo del programa...")
             break
         else:

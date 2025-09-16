@@ -2,6 +2,7 @@ from database.config import SessionLocal
 from crud import cliente_crud
 from schemas import ClienteCreate
 
+
 class ClienteService:
     def __init__(self, db=None):
         if db is None:
