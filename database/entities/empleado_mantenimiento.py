@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from database.config import Base
 
+
 class EmpleadoMantenimiento(Base):
     __tablename__ = "empleados_mantenimiento"
 

@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from database.config import Base
 
+
 class Concesionario(Base):
     __tablename__ = "concesionarios"
 

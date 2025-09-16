@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Boolean, Column, Float, Integer, String
 from database.config import Base
+
 
 class Auto(Base):
     __tablename__ = "autos"
@@ -8,5 +9,6 @@ class Auto(Base):
     marca = Column(String, index=True)
     modelo = Column(String, index=True)
     precio = Column(Float)
-    tipo = Column(String)  # Nuevo, Usado, Eléctrico
-    extra = Column(String, nullable=True)  # Kilometraje o autonomía
+    tipo = Column(String)
+    extra = Column(String)
+    vendido = Column(Boolean, default=False)

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class ClienteBase(BaseModel):
     nombre: str
     apellido: str
@@ -8,8 +9,10 @@ class ClienteBase(BaseModel):
     telefono: str | None = None
     direccion: str | None = None
 
+
 class ClienteCreate(ClienteBase):
     pass
+
 
 class ClienteOut(ClienteBase):
     id: int
