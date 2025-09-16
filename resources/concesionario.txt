@@ -1,0 +1,32 @@
+from database import SessionLocal
+import crud, schemas
+
+class Concesionario:
+    def __init__(self):
+        self.db = SessionLocal()
+
+    def comprar_auto(self, auto):
+        auto_schema = schemas.AutoCreate(
+            marca=auto.marca,
+            modelo=auto.modelo,
+            precio=auto.precio,
+            tipo=auto.__class__.__name__,
+            extra=getattr(auto, "kilometraje", getattr(auto, "autonomia", None))
+        )
+        crud.crear_auto(self.db, auto_schema)
+        print(f"Se ha comprado: {auto.mostrar_info()}")
+
+    def mostrar_autos(self):
+        autos = crud.obtener_autos(self.db)
+        if not autos:
+            print("No hay autos en el concesionario.")
+        else:
+            for auto in autos:
+                print(f"{auto.id}. {auto.marca} {auto.modelo} ({auto.tipo}) - ${auto.precio}")
+
+    def vender_auto(self, auto_id: int):
+        auto = crud.eliminar_auto(self.db, auto_id)
+        if auto:
+            print(f"Se ha vendido: {auto.marca} {auto.modelo}")
+        else:
+            print("ID inválido, no se pudo vender el auto.")
