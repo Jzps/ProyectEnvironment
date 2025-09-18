@@ -1,19 +1,22 @@
+import uuid
+from datetime import datetime
 from sqlalchemy.orm import Session
 from database.entities.auto import Auto
 from schemas.auto_schema import AutoCreate
+from uuid import UUID
 
 
-def crear_auto(db: Session, auto: AutoCreate):
-    """
-    Crea un auto; por defecto `vendido` es False.
-    """
+def crear_auto(db: Session, auto: AutoCreate, usuario_id: UUID | None = None):
     db_auto = Auto(
+        id=uuid.uuid4(),
         marca=auto.marca,
         modelo=auto.modelo,
         precio=auto.precio,
         tipo=auto.tipo,
         extra=auto.extra,
         vendido=False,
+        id_usuario_creacion=usuario_id,
+        fecha_creacion=datetime.utcnow(),
     )
     db.add(db_auto)
     db.commit()
@@ -22,37 +25,28 @@ def crear_auto(db: Session, auto: AutoCreate):
 
 
 def obtener_autos(db: Session, disponibles_only: bool = True):
-    """
-    Obtiene autos. Por defecto devuelve solo los disponibles (vendido == False).
-    Si disponibles_only=False devuelve todos los autos.
-    """
     q = db.query(Auto)
     if disponibles_only:
         q = q.filter(Auto.vendido == False)
     return q.all()
 
 
-def obtener_auto_por_id(db: Session, auto_id: int):
+def obtener_auto_por_id(db: Session, auto_id: UUID):
     return db.query(Auto).filter(Auto.id == auto_id).first()
 
 
-def marcar_vendido(db: Session, auto_id: int):
-    """
-    Marca un auto como vendido (vendido=True). Devuelve el objeto actualizado.
-    """
+def marcar_vendido(db: Session, auto_id: UUID, usuario_id: UUID | None = None):
     auto_obj = db.query(Auto).filter(Auto.id == auto_id).first()
     if auto_obj:
         auto_obj.vendido = True
+        auto_obj.id_usuario_edicion = usuario_id
+        auto_obj.fecha_actualizacion = datetime.utcnow()
         db.commit()
         db.refresh(auto_obj)
     return auto_obj
 
 
-def eliminar_auto(db: Session, auto_id: int):
-    """
-    Eliminación física (se mantiene para compatibilidad).
-    Evítala si quieres conservar el historial de ventas.
-    """
+def eliminar_auto(db: Session, auto_id: UUID):
     auto = db.query(Auto).filter(Auto.id == auto_id).first()
     if auto:
         db.delete(auto)
@@ -61,7 +55,4 @@ def eliminar_auto(db: Session, auto_id: int):
 
 
 def obtener_autos_vendidos(db: Session):
-    """
-    Devuelve todos los autos que ya fueron vendidos (vendido=True).
-    """
     return db.query(Auto).filter(Auto.vendido == True).all()

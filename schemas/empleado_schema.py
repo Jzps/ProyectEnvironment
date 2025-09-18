@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from datetime import date
+from datetime import date, datetime
+from uuid import UUID
 
 
 class EmpleadoBase(BaseModel):
@@ -9,7 +10,7 @@ class EmpleadoBase(BaseModel):
     correo: str | None = None
     telefono: str | None = None
     fecha_contratacion: date | None = None
-    concesionario_id: int | None = None
+    concesionario_id: UUID | None = None
 
 
 class EmpleadoCreate(EmpleadoBase):
@@ -17,28 +18,37 @@ class EmpleadoCreate(EmpleadoBase):
 
 
 class EmpleadoOut(EmpleadoBase):
-    id: int
+    id: UUID
+    id_usuario_creacion: UUID | None = None
+    id_usuario_edicion: UUID | None = None
+    fecha_creacion: datetime | None = None
+    fecha_actualizacion: datetime | None = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class VendedorCreate(BaseModel):
-    empleado_id: int
+    empleado_id: UUID
 
 
 class VendedorOut(BaseModel):
-    empleado_id: int
+    empleado_id: UUID
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class MantenimientoEmpleadoCreate(BaseModel):
-    empleado_id: int
+    empleado_id: UUID
     tipo_carro: str
 
 
 class MantenimientoEmpleadoOut(MantenimientoEmpleadoCreate):
+    id_usuario_creacion: UUID | None = None
+    id_usuario_edicion: UUID | None = None
+    fecha_creacion: datetime | None = None
+    fecha_actualizacion: datetime | None = None
+
     class Config:
-        orm_mode = True
+        from_attributes = True
