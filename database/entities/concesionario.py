@@ -19,7 +19,6 @@ class Concesionario(Base):
     ubicacion = Column(String, nullable=True)
     telefono = Column(String, nullable=True)
 
-    # Columnas de auditoría
     id_usuario_creacion = Column(UUID(as_uuid=True), nullable=True)
     id_usuario_edicion = Column(UUID(as_uuid=True), nullable=True)
     fecha_creacion = Column(

@@ -62,13 +62,16 @@ class Concesionario:
         if not clientes:
             print("No hay clientes registrados. Registre un cliente antes de vender.")
             return
-        for c in clientes:
-            print(f"{c.id}. {c.nombre} {c.apellido} - DNI: {c.dni}")
-        cliente_id = UUID(input("Ingrese el ID del cliente comprador: "))
-        cliente = next((c for c in clientes if c.id == cliente_id), None)
-        if not cliente:
+
+        print("\n--- CLIENTES ---")
+        for i, c in enumerate(clientes, start=1):
+            print(f"{i}. {c.nombre} {c.apellido} - DNI: {c.dni}")
+
+        opcion_cliente = int(input("Ingrese el número del cliente comprador: "))
+        if not (1 <= opcion_cliente <= len(clientes)):
             print("Cliente inválido.")
             return
+        cliente = clientes[opcion_cliente - 1]
 
         vendedores = self.empleado_service.listar_vendedores()
         if not vendedores:
@@ -78,16 +81,20 @@ class Concesionario:
         empleados = self.empleado_service.listar_empleados()
         emp_map = {e.id: e for e in empleados}
 
-        for v in vendedores:
+        print("\n--- VENDEDORES ---")
+        vendedores_validos = []
+        for i, v in enumerate(vendedores, start=1):
             emp = emp_map.get(v.empleado_id)
             if emp:
-                print(f"{v.empleado_id}. {emp.nombre} {emp.apellido}")
+                vendedores_validos.append(v)
+                print(f"{i}. {emp.nombre} {emp.apellido}")
 
-        vendedor_id = UUID(input("Ingrese el ID del vendedor: "))
-        vendedor_emp = emp_map.get(vendedor_id)
-        if not vendedor_emp:
+        opcion_vendedor = int(input("Ingrese el número del vendedor: "))
+        if not (1 <= opcion_vendedor <= len(vendedores_validos)):
             print("Vendedor inválido.")
             return
+        vendedor = vendedores_validos[opcion_vendedor - 1]
+        vendedor_emp = emp_map.get(vendedor.empleado_id)
 
         auto_crud.marcar_vendido(self.db, auto.id, usuario_id)
 
@@ -95,7 +102,7 @@ class Concesionario:
             FacturaCreate(
                 fecha_emision=date.today(),
                 cliente_id=cliente.id,
-                empleado_id=vendedor_id,
+                empleado_id=vendedor.empleado_id,
                 auto_id=auto.id,
                 precio_carro_base=auto.precio,
                 costo_mantenimiento=0.0,
@@ -132,22 +139,26 @@ class Concesionario:
         empleados = self.empleado_service.listar_empleados()
         emp_map = {e.id: e for e in empleados}
 
-        for t in tecnicos:
+        print("\n--- TÉCNICOS ---")
+        tecnicos_validos = []
+        for i, t in enumerate(tecnicos, start=1):
             emp = emp_map.get(t.empleado_id)
             if emp:
-                print(f"{t.empleado_id}. {emp.nombre} {emp.apellido} - {t.tipo_carro}")
+                tecnicos_validos.append(t)
+                print(f"{i}. {emp.nombre} {emp.apellido} - {t.tipo_carro}")
 
-        tecnico_id = UUID(input("Ingrese el ID del técnico: "))
-        if not any(t.empleado_id == tecnico_id for t in tecnicos):
+        opcion_tecnico = int(input("Ingrese el número del técnico: "))
+        if not (1 <= opcion_tecnico <= len(tecnicos_validos)):
             print("Técnico inválido.")
             return
+        tecnico = tecnicos_validos[opcion_tecnico - 1]
 
         detalle = input("Detalle del mantenimiento: ")
         costo = float(input("Costo: "))
 
         mant = MantenimientoCreate(
             auto_id=auto_db.id,
-            empleado_id=tecnico_id,
+            empleado_id=tecnico.empleado_id,
             fecha=date.today(),
             detalle=detalle,
             costo=costo,

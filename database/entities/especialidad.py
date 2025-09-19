@@ -1,8 +1,8 @@
 import uuid
 from sqlalchemy import Column, String, Table, ForeignKey, DateTime
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.sql import func
 from database.base import Base
-from datetime import datetime
 
 # Tabla intermedia para relación muchos a muchos
 empleado_mantenimiento_especialidad = Table(
@@ -32,7 +32,12 @@ class Especialidad(Base):
     # columnas de auditoría
     id_usuario_creacion = Column(UUID(as_uuid=True), nullable=True)
     id_usuario_edicion = Column(UUID(as_uuid=True), nullable=True)
-    fecha_creacion = Column(DateTime, default=datetime.utcnow)
+    fecha_creacion = Column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
     fecha_actualizacion = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
     )

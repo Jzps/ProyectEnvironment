@@ -26,7 +26,6 @@ class Empleado(Base):
         UUID(as_uuid=True), ForeignKey("concesionarios.id"), nullable=True
     )
 
-    # Columnas de auditoría
     id_usuario_creacion = Column(UUID(as_uuid=True), nullable=True)
     id_usuario_edicion = Column(UUID(as_uuid=True), nullable=True)
     fecha_creacion = Column(

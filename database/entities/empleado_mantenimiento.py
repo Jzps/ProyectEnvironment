@@ -13,7 +13,6 @@ class EmpleadoMantenimiento(Base):
     )
     tipo_carro = Column(String, nullable=False)
 
-    # Columnas de auditoría
     id_usuario_creacion = Column(UUID(as_uuid=True), nullable=True)
     id_usuario_edicion = Column(UUID(as_uuid=True), nullable=True)
     fecha_creacion = Column(

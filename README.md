@@ -1,119 +1,117 @@
 # ¡¡¡¡¡IMPORTANTE!!!!!
 
-Para que el sistema funcione correctamente tienes dos opciones:
+Para que el sistema funcione correctamente:
 
-1. **Reiniciar la base de datos local**  
-   - Si estás trabajando con SQLite, simplemente elimina el archivo `autos.db`.  
-   - Al ejecutar el programa nuevamente, se recrearán las tablas automáticamente.
-
-2. **Iniciar sesión con el usuario administrador por defecto**  
+  **Iniciar sesión con el usuario administrador por defecto**  
    - **USUARIO:** Usuario  
    - **CONTRASEÑA:** 123  
 
-```markdown
+---
+
 # 🚗 Concesionario de Autos en Python
 
-Este proyecto es un **sistema de gestión para un concesionario de autos**, desarrollado en **Python** con **SQLAlchemy** y **PostgreSQL** (Neon DB).  
-Permite **registrar, vender, dar mantenimiento y administrar autos, clientes, empleados, facturas y mantenimientos** de forma estructurada.
+Este proyecto es un **sistema de gestión para un concesionario de autos**, desarrollado en **Python** con **SQLAlchemy** y **PostgreSQL (NeonDB)**.
 
+Permite **registrar, vender, dar mantenimiento y administrar autos, clientes, empleados, facturas y mantenimientos** de forma estructurada.
 
 ---
 
 ## 📂 Estructura del Proyecto
 
-```
-
+```bash
 ProyectEnvironment/
 │── autos/                   # Clases que representan los distintos tipos de autos
 │   ├── base.py              # Clase base Auto
 │   ├── tipos.py             # Subclases: AutoNuevo, AutoUsado, AutoElectrico
 │
 │── crud/                    # Operaciones CRUD directas sobre la base de datos
-│   ├── admin\_crud.py        # CRUD de administradores
-│   ├── auto\_crud.py         # CRUD de autos
-│   ├── cliente\_crud.py      # CRUD de clientes
-│   ├── concesionario\_crud.py# CRUD del concesionario
-│   ├── empleado\_crud.py     # CRUD de empleados
-│   ├── especialidad\_crud.py # CRUD de especialidades de técnicos
-│   ├── factura\_crud.py      # CRUD de facturas
-│   ├── mantenimiento\_crud.py# CRUD de mantenimientos
+│   ├── admin_crud.py
+│   ├── auto_crud.py
+│   ├── cliente_crud.py
+│   ├── concesionario_crud.py
+│   ├── empleado_crud.py
+│   ├── especialidad_crud.py
+│   ├── factura_crud.py
+│   ├── mantenimiento_crud.py
 │
 │── database/                # Configuración y entidades de la base de datos
-│   ├── base.py              # Base declarativa de SQLAlchemy
-│   ├── config.py            # Configuración de conexión (Postgres/Neon)
-│   ├── db.py                # Sesiones y motor de base de datos
-│   ├── init\_db.py           # Inicialización de tablas
+│   ├── base.py
+│   ├── config.py
+│   ├── db.py
+│   ├── init_db.py
 │   └── entities/            # Definición de modelos (tablas)
 │
 │── schemas/                 # Esquemas con Pydantic (validación de datos)
-│   ├── admin\_schema.py
-│   ├── auto\_schema.py
-│   ├── cliente\_schema.py
-│   ├── concesionario\_schema.py
-│   ├── empleado\_schema.py
-│   ├── especialidad\_schema.py
-│   ├── factura\_schema.py
-│   ├── mantenimiento\_schema.py
+│   ├── admin_schema.py
+│   ├── auto_schema.py
+│   ├── cliente_schema.py
+│   ├── concesionario_schema.py
+│   ├── empleado_schema.py
+│   ├── especialidad_schema.py
+│   ├── factura_schema.py
+│   ├── mantenimiento_schema.py
 │
 │── services/                # Lógica de negocio (intermediarios entre CRUD y main)
-│   ├── admin\_service.py     # Servicio para login de administradores
-│   ├── cliente\_service.py   # Gestión de clientes
-│   ├── concesionario\_service.py # Operaciones principales del concesionario
-│   ├── empleado\_service.py  # Gestión de empleados
-│   ├── factura\_service.py   # Generación automática de facturas al vender autos
-│   ├── mantenimiento\_service.py # Registro de mantenimientos
+│   ├── admin_service.py
+│   ├── cliente_service.py
+│   ├── concesionario_service.py
+│   ├── empleado_service.py
+│   ├── factura_service.py
+│   ├── mantenimiento_service.py
 │
 │── main.py                  # Menú principal (punto de entrada al sistema)
-│── reset\_db.py              # Script opcional para reiniciar las tablas
-│── test\_connection.py       # Script para probar conexión con la base de datos
+│── reset_db.py              # Script opcional para reiniciar las tablas
+│── test_connection.py       # Script para probar conexión con la base de datos
 │── requirements.txt         # Dependencias necesarias
-│── README.md                # Este archivo
-
-````
+│── README.md                # Documentación del proyecto
+```
 
 ---
 
 ## ⚙️ Requisitos Previos
 
-- **Python 3.10+**
-- **PostgreSQL** (se usa NeonDB en la nube)
-- Librerías listadas en `requirements.txt`
+* **Python 3.10+**
+* **PostgreSQL** (se recomienda NeonDB en la nube)
+* Librerías listadas en `requirements.txt`
 
 Instala las dependencias con:
 
 ```bash
 pip install -r requirements.txt
-````
+```
 
 ---
 
 ## 🚀 Instalación y Ejecución
 
-1. **Clonar el repositorio:**
+1. **Clonar el repositorio**
 
 ```bash
 git clone https://github.com/Jzps/ProyectEnvironment.git
 cd ProyectEnvironment
 ```
 
-2. **Configurar la base de datos:**
+2. **Configurar la base de datos**
 
-El proyecto está preparado para **NeonDB (Postgres en la nube)**.
-Debes configurar la variable `DATABASE_URL` en `database/config.py` con tu conexión a Neon o Postgres local.
+En el archivo `.env` debes definir tu conexión a Neon o Postgres local. Ejemplo:
 
-Ejemplo:
-
-```python
-DATABASE_URL = "postgresql+psycopg2://usuario:contraseña@host/dbname"
+```env
+DATABASE_URL=postgresql+psycopg2://usuario:contraseña@host/dbname
 ```
 
-3. **Inicializar la base de datos:**
+3. **Inicializar la base de datos**
 
 ```bash
-python init_db.py
+python database/init_db.py
 ```
 
-4. **Ejecutar el programa:**
+4. **Probar la conexión (opcional)**
+
+```bash
+python test_connection.py
+```
+
+5. **Ejecutar el programa**
 
 ```bash
 python main.py
@@ -134,15 +132,15 @@ python main.py
 5. Salir
 ```
 
-* **Concesionario (Autos):** Comprar, vender, mostrar autos, registrar mantenimientos y listar autos vendidos.
-* **Clientes:** Registrar, listar y eliminar clientes.
-* **Empleados:** Registrar empleados, vendedores y técnicos de mantenimiento.
-* **Mantenimientos:** Listar mantenimientos realizados.
-* **Salir:** Termina el programa.
+🔹 **Concesionario (Autos):** Comprar, vender, mostrar autos, registrar mantenimientos y listar autos vendidos.
+🔹 **Clientes:** Registrar, listar y eliminar clientes.
+🔹 **Empleados:** Registrar empleados, vendedores y técnicos de mantenimiento.
+🔹 **Mantenimientos:** Listar mantenimientos realizados.
+🔹 **Salir:** Termina el programa.
 
 ---
 
-## 📝 Descripción de la Lógica
+## 📝 Lógica de Negocio
 
 * **Autos:**
   Representados por clases (`AutoNuevo`, `AutoUsado`, `AutoElectrico`), guardados en BD vía `auto_crud`.
@@ -156,13 +154,8 @@ python main.py
 * **Mantenimientos:**
   Se asigna un técnico y se guarda el detalle y costo en la tabla correspondiente.
 
----
-
-## 💡 Ideas Futuras
-
-* Reportes en PDF de facturas.
-* Interfaz gráfica o API REST con FastAPI.
-* Autenticación avanzada de usuarios (más de un rol).
+* **Login de Administradores:**
+  El sistema incluye un **módulo de login** que permite validar credenciales antes de usar el sistema.
 
 ---
 
@@ -176,7 +169,5 @@ python main.py
 ## 📜 Licencia
 
 Este proyecto puede ser usado y modificado con fines **educativos y personales**.
-
-```
 
 ---

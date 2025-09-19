@@ -37,7 +37,6 @@ class Factura(Base):
     total = Column(Float, nullable=False)
     observaciones = Column(String, nullable=True)
 
-    # Columnas de auditoría
     id_usuario_creacion = Column(UUID(as_uuid=True), nullable=True)
     id_usuario_edicion = Column(UUID(as_uuid=True), nullable=True)
     fecha_creacion = Column(

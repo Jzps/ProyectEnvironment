@@ -22,7 +22,6 @@ class Cliente(Base):
     telefono = Column(String, nullable=True)
     direccion = Column(String, nullable=True)
 
-    # Columnas de auditoría
     id_usuario_creacion = Column(UUID(as_uuid=True), nullable=True)
     id_usuario_edicion = Column(UUID(as_uuid=True), nullable=True)
     fecha_creacion = Column(

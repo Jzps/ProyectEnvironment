@@ -1,4 +1,3 @@
-# database/base.py
 import uuid
 from datetime import datetime
 from sqlalchemy import Column, DateTime
@@ -10,7 +9,7 @@ Base = declarative_base()
 
 class AuditMixin:
     """
-    Mezcla reusables para columnas de auditoría.
+    Mixin reutilizable para columnas de auditoría.
     """
 
     id_usuario_creacion = Column(PG_UUID(as_uuid=True), nullable=True)

@@ -5,28 +5,36 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 
-# Cargar variables desde .env
+
 load_dotenv()
 
-# Configuración de Alembic
+
 config = context.config
 
-# Sobrescribir sqlalchemy.url con la variable del .env
 database_url = os.getenv("DATABASE_URL")
 
 if database_url:
     config.set_main_option("sqlalchemy.url", database_url)
 
-# Configuración de logging
+
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Importar los modelos de tu proyecto
-from database.config import (
-    Base,
-)  # Asegúrate que aquí esté declarada Base = declarative_base()
 
-# Metadatos de los modelos (para autogenerate)
+from database.config import Base
+
+
+import database.entities.admin
+import database.entities.auto
+import database.entities.cliente
+import database.entities.concesionario
+import database.entities.empleado
+import database.entities.empleado_mantenimiento
+import database.entities.empleado_vendedor
+import database.entities.especialidad
+import database.entities.factura
+import database.entities.mantenimiento
+
 target_metadata = Base.metadata
 
 
