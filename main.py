@@ -1,3 +1,26 @@
+"""
+Script principal de la aplicación del concesionario.
+
+Proporciona menús interactivos para:
+- Gestionar clientes: registrar, listar y eliminar.
+- Gestionar empleados: registrar empleados, vendedores y técnicos.
+- Gestionar autos: comprar, vender, mostrar y dar mantenimiento.
+- Gestionar mantenimientos: listar mantenimientos registrados.
+- Control de acceso: login de administrador.
+
+Este script inicializa la base de datos, crea una sesión de SQLAlchemy
+y ejecuta el menú principal interactivo basado en la entrada del usuario.
+
+Funciones principales:
+- menu_clientes(db): Menú para registrar, listar y eliminar clientes.
+- menu_empleados(db): Menú para registrar empleados, vendedores y técnicos.
+- menu_mantenimientos(db): Menú para listar mantenimientos.
+- menu(db): Menú principal del sistema que integra todos los submenús.
+
+Al inicio del programa, verifica si existe algún administrador. Si no, 
+permite crear uno antes de acceder al sistema.
+"""
+
 from database import SessionLocal, init_db
 from services import (
     Concesionario,
@@ -21,7 +44,23 @@ db = SessionLocal()
 
 
 def menu_clientes(db):
-    """Menú para gestionar clientes"""
+    """
+    Menú para gestionar clientes.
+
+    Opciones:
+    1. Registrar Cliente:
+       - Solicita nombre, apellido, DNI, correo, teléfono y dirección.
+       - Crea un Cliente usando ClienteService.
+    2. Listar Clientes:
+       - Muestra todos los clientes registrados con ID, nombre, apellido y DNI.
+    3. Eliminar Cliente:
+       - Solicita el ID del cliente y lo elimina si existe.
+    4. Volver:
+       - Sale del menú de clientes.
+    
+    El menú se mantiene en un bucle hasta que el usuario elige volver.
+    """
+
     cliente_service = ClienteService(db)
     while True:
         print("\n--- MENÚ CLIENTES ---")
@@ -71,6 +110,27 @@ def menu_clientes(db):
 
 
 def menu_empleados(db):
+    """
+    Menú para gestionar empleados.
+
+    Opciones:
+    1. Registrar Empleado:
+       - Solicita nombre, apellido, DNI, correo, teléfono.
+       - La fecha de contratación se toma como la fecha actual.
+       - Crea un empleado usando EmpleadoService.
+    2. Listar Empleados:
+       - Muestra todos los empleados con ID, nombre, apellido y DNI.
+    3. Registrar Vendedor:
+       - Lista empleados disponibles que no sean vendedores.
+       - Permite asignar un empleado como vendedor.
+    4. Registrar Técnico:
+       - Lista empleados disponibles que no sean técnicos.
+       - Permite asignar un empleado como técnico y definir el tipo de carro que atiende.
+    5. Volver:
+       - Sale del menú de empleados.
+
+    El menú se mantiene en un bucle hasta que el usuario elige volver.
+    """
 
     empleado_service = EmpleadoService(db)
     while True:
@@ -172,7 +232,18 @@ def menu_empleados(db):
 
 
 def menu_mantenimientos(db):
-    """Menú para mostrar mantenimientos registrados"""
+    """
+    Menú para gestionar mantenimientos de autos.
+
+    Opciones:
+    1. Listar Mantenimientos:
+       - Muestra todos los mantenimientos registrados con ID, auto, técnico, detalle y costo.
+    2. Volver:
+       - Sale del menú de mantenimientos.
+
+    El menú se mantiene en un bucle hasta que el usuario elige volver.
+    """
+
     mantenimiento_service = MantenimientoService(db)
     while True:
         print("\n--- MENÚ MANTENIMIENTOS ---")
@@ -198,7 +269,35 @@ def menu_mantenimientos(db):
 
 
 def menu(db):
-    """Menú principal del sistema"""
+    """
+    Menú principal del sistema.
+
+    Opciones:
+    1. Concesionario (Autos):
+       - Comprar Auto:
+           * Selección de tipo de auto: Nuevo, Usado, Eléctrico.
+           * Solicita datos según tipo y registra el auto.
+       - Vender Auto:
+           * Muestra autos disponibles.
+           * Selección de cliente y vendedor.
+           * Marca auto como vendido y genera factura.
+       - Mostrar Autos Disponibles.
+       - Dar Mantenimiento:
+           * Selección de auto y técnico.
+           * Registra mantenimiento con detalle y costo.
+       - Mostrar Autos Vendidos.
+    2. Clientes:
+       - Llama a menu_clientes(db).
+    3. Empleados:
+       - Llama a menu_empleados(db).
+    4. Mantenimientos:
+       - Llama a menu_mantenimientos(db).
+    5. Salir:
+       - Termina la ejecución del programa.
+
+    Mantiene un bucle hasta que el usuario decide salir.
+    """
+
     concesionario = Concesionario(db)
 
     while True:
@@ -289,6 +388,18 @@ def menu(db):
 
 
 if __name__ == "__main__":
+    """
+    Punto de entrada del programa.
+
+    Flujo:
+    1. Inicializa la base de datos y la sesión.
+    2. Verifica si existe al menos un administrador.
+       - Si no hay, permite crear uno.
+    3. Solicita login de administrador.
+       - Si las credenciales son correctas, llama a menu(db).
+       - Si no, termina la ejecución.
+    """
+    
     db = SessionLocal()
     admin_service = AdminService(db)
 

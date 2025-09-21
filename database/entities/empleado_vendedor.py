@@ -6,6 +6,36 @@ from database.base import Base
 
 
 class EmpleadoVendedor(Base):
+    """
+    Modelo ORM para la tabla ``empleados_vendedor``.
+
+    Representa la especialización de un empleado que trabaja en el
+    área de ventas dentro del concesionario.  
+    Contiene la relación con el empleado principal y los campos
+    de auditoría para el control de creación y edición de registros.
+
+    Atributos
+    ----------
+    empleado_id : UUID
+        Identificador único del empleado vendedor.
+        Clave primaria y llave foránea que referencia a ``empleados.id``.
+
+    id_usuario_creacion : UUID | None
+        Identificador del usuario que creó el registro, si corresponde.
+
+    id_usuario_edicion : UUID | None
+        Identificador del usuario que realizó la última edición, si corresponde.
+
+    fecha_creacion : datetime
+        Fecha y hora (UTC) en que se creó el registro.
+        Se asigna automáticamente al insertar el registro.
+
+    fecha_actualizacion : datetime | None
+        Fecha y hora (UTC) de la última actualización del registro.
+        Se actualiza automáticamente en cada modificación;
+        puede ser nula si nunca se ha editado.
+    """
+    
     __tablename__ = "empleados_vendedor"
 
     empleado_id = Column(

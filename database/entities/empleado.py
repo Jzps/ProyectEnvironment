@@ -6,6 +6,61 @@ from database.base import Base
 
 
 class Empleado(Base):
+    """
+    Modelo ORM para la tabla ``empleados``.
+
+    Representa a un empleado del concesionario, ya sea del área de
+    ventas o de mantenimiento.  
+    Incluye datos personales, fecha de contratación, y una posible
+    relación con un concesionario específico, junto con los campos de
+    auditoría para control de creación y modificación de registros.
+
+    Atributos
+    ----------
+    id : UUID
+        Identificador único del empleado.
+        Clave primaria generada automáticamente con UUID v4.
+
+    nombre : str
+        Nombres del empleado.
+
+    apellido : str
+        Apellidos del empleado.
+
+    dni : str
+        Documento de identidad único del empleado.
+        Campo obligatorio y único en la base de datos.
+
+    correo : str | None
+        Correo electrónico de contacto (opcional).
+
+    telefono : str | None
+        Número de teléfono del empleado (opcional).
+
+    fecha_contratacion : date
+        Fecha en que el empleado fue contratado.
+
+    concesionario_id : UUID | None
+        Identificador del concesionario al que pertenece el empleado.
+        Llave foránea que referencia a ``concesionarios.id``.
+
+    id_usuario_creacion : UUID | None
+        Identificador del usuario que creó el registro, si aplica.
+
+    id_usuario_edicion : UUID | None
+        Identificador del usuario que realizó la última edición,
+        si aplica.
+
+    fecha_creacion : datetime
+        Fecha y hora (UTC) en que se creó el registro.
+        Se asigna automáticamente en la inserción.
+
+    fecha_actualizacion : datetime | None
+        Fecha y hora (UTC) de la última actualización.
+        Se actualiza automáticamente en cada modificación; puede ser
+        nula si nunca se ha editado.
+    """
+    
     __tablename__ = "empleados"
 
     id = Column(

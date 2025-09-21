@@ -6,6 +6,35 @@ from database.base import Base
 
 
 class Concesionario(Base):
+    """
+    Modelo ORM para la tabla ``concesionarios``.
+
+    Representa una sucursal o punto de venta de la red de concesionarios,
+    con información de identificación, contacto y datos de auditoría.
+
+    Atributos
+    ----------
+    id : UUID
+        Identificador único primario del concesionario, generado automáticamente.
+    nombre : str
+        Nombre oficial del concesionario o sucursal.
+    ubicacion : str | None
+        Dirección física o ubicación de la sucursal (opcional).
+    telefono : str | None
+        Número de teléfono de contacto (opcional).
+
+    id_usuario_creacion : UUID | None
+        Identificador del usuario que creó el registro, si corresponde.
+    id_usuario_edicion : UUID | None
+        Identificador del usuario que realizó la última edición, si corresponde.
+    fecha_creacion : datetime
+        Fecha y hora (UTC) en que se creó el registro. Se asigna automáticamente.
+    fecha_actualizacion : datetime | None
+        Fecha y hora (UTC) de la última actualización del registro.
+        Se actualiza automáticamente en cada modificación; puede ser nula
+        si nunca se ha editado.
+    """
+    
     __tablename__ = "concesionarios"
 
     id = Column(
