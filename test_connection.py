@@ -4,6 +4,14 @@ from database.config import DATABASE_URL, engine
 
 
 def test_connection():
+    """
+    Prueba la conexión a la base de datos PostgreSQL con SQLAlchemy.
+    Muestra la URL, versión de PostgreSQL, base de datos y tablas del esquema.
+    Si la conexión falla imprime el error.
+
+    Returns:
+        True si la conexión fue exitosa, False en caso contrario.
+    """
 
     print("=== PRUEBA DE CONEXION A POSTGRESQL (NEON) ===\n")
     print(f"URL de conexion: {DATABASE_URL}")
@@ -48,6 +56,7 @@ def test_connection():
 
 
 if __name__ == "__main__":
+
     print("Iniciando prueba de conexion...\n")
     if test_connection():
         print("\n[SUCCESS] Conexion realizada con exito")

@@ -6,6 +6,13 @@ from database.base import Base
 
 
 class Concesionario(Base):
+    """
+    Modelo ORM para la tabla ``concesionarios``.
+
+    Representa una sucursal o punto de venta de la red de concesionarios,
+    con datos de identificación, contacto y auditoría de creación/edición.
+    """
+
     __tablename__ = "concesionarios"
 
     id = Column(

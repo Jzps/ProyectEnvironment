@@ -6,6 +6,13 @@ from database.base import Base
 
 
 class Cliente(Base):
+    """
+    Modelo ORM para la tabla ``clientes``.
+
+    Representa a un cliente del concesionario con datos de identificación
+    y contacto. Incluye campos de auditoría para creación y actualizaciones.
+    """
+
     __tablename__ = "clientes"
 
     id = Column(

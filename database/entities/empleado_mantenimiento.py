@@ -6,6 +6,13 @@ from database.base import Base
 
 
 class EmpleadoMantenimiento(Base):
+    """
+    Modelo ORM para la tabla ``empleados_mantenimiento``.
+
+    Representa a un empleado especializado en mantenimiento de vehículos,
+    indicando el tipo de carro que atiende y datos de auditoría.
+    """
+
     __tablename__ = "empleados_mantenimiento"
 
     empleado_id = Column(

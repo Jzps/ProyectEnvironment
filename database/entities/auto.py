@@ -6,6 +6,13 @@ from database.base import Base
 
 
 class Auto(Base):
+    """
+    Modelo ORM para la tabla ``autos``.
+
+    Representa un automóvil con marca, modelo, precio, tipo y estado de venta.
+    Incluye además campos de auditoría para registrar creación y actualizaciones.
+    """
+
     __tablename__ = "autos"
 
     id = Column(

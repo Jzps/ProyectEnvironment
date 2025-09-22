@@ -6,6 +6,14 @@ from database.base import Base
 
 
 class Empleado(Base):
+    """
+    Modelo ORM para la tabla ``empleados``.
+
+    Representa a un empleado del concesionario, ya sea de ventas o
+    mantenimiento. Incluye datos personales, fecha de contratación,
+    vínculo opcional con un concesionario y campos de auditoría.
+    """
+
     __tablename__ = "empleados"
 
     id = Column(

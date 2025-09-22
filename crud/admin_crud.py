@@ -7,6 +7,11 @@ from uuid import UUID
 
 
 def crear_admin(db: Session, admin: AdminCreate, usuario_id: UUID | None = None):
+    """
+    Crea un nuevo administrador y lo guarda en la base de datos.
+    Registra username, password, usuario creador y fecha de creación.
+    Retorna el objeto Admin creado.
+    """
     db_admin = Admin(
         id=uuid.uuid4(),
         username=admin.username,
@@ -21,4 +26,8 @@ def crear_admin(db: Session, admin: AdminCreate, usuario_id: UUID | None = None)
 
 
 def obtener_admin(db: Session, username: str):
+    """
+    Busca un administrador por su nombre de usuario.
+    Retorna el objeto Admin si existe, en caso contrario None.
+    """
     return db.query(Admin).filter(Admin.username == username).first()

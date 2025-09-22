@@ -13,7 +13,18 @@ from uuid import UUID
 
 
 class Concesionario:
+    """
+    Servicio central para gestionar autos, clientes,
+    empleados, ventas y mantenimientos.
+    """
+
     def __init__(self, db=None):
+        """
+        Constructor del concesionario.
+
+        Args:
+            db: Sesión de SQLAlchemy (opcional). Si no se pasa, se crea una nueva.
+        """
         self.db = db or SessionLocal()
         self.cliente_service = ClienteService(self.db)
         self.empleado_service = EmpleadoService(self.db)
@@ -21,6 +32,13 @@ class Concesionario:
         self.factura_service = FacturaService(self.db)
 
     def comprar_auto(self, auto, usuario_id: UUID | None = None):
+        """
+        Registra la compra de un auto y lo almacena en la BD.
+
+        Args:
+            auto: Objeto del auto.
+            usuario_id (UUID | None): Usuario que lo registra.
+        """
         auto_schema = AutoCreate(
             marca=auto.marca,
             modelo=auto.modelo,
@@ -50,6 +68,14 @@ class Concesionario:
             print(f"{a.id}. {a.marca} {a.modelo} ({a.tipo}) - ${a.precio}")
 
     def vender_auto(self, indice: int, usuario_id: UUID | None = None):
+        """
+        Vende un auto disponible, asigna cliente y vendedor,
+        y genera la factura correspondiente.
+
+        Args:
+            indice (int): Índice del auto.
+            usuario_id (UUID | None): Usuario que realiza la venta.
+        """
         autos = auto_crud.obtener_autos(self.db, disponibles_only=True)
         if not (0 <= indice - 1 < len(autos)):
             print("Índice inválido, no se pudo vender el auto.")
@@ -123,6 +149,13 @@ class Concesionario:
         print(f"Total: ${factura.total}")
 
     def dar_mantenimiento(self, indice: int, usuario_id: UUID | None = None):
+        """
+        Registra un mantenimiento de auto con un técnico asignado.
+
+        Args:
+            indice (int): Índice del auto.
+            usuario_id (UUID | None): Usuario que lo registra.
+        """
         autos_all = auto_crud.obtener_autos(self.db, disponibles_only=False)
         if not (0 <= indice - 1 < len(autos_all)):
             print("Índice inválido, no se pudo dar mantenimiento.")

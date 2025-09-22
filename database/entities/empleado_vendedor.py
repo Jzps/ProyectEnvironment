@@ -6,6 +6,13 @@ from database.base import Base
 
 
 class EmpleadoVendedor(Base):
+    """
+    Modelo ORM para la tabla ``empleados_vendedor``.
+
+    Representa la especialización de un empleado en el área de ventas,
+    vinculada al registro principal de empleados e incluyendo datos de auditoría.
+    """
+
     __tablename__ = "empleados_vendedor"
 
     empleado_id = Column(

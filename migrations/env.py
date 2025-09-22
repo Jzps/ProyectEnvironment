@@ -39,7 +39,10 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
-    """Ejecutar migraciones en modo 'offline'."""
+    """
+    Ejecuta migraciones en modo offline.
+    Genera el SQL sin conectarse a la base de datos.
+    """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -53,7 +56,10 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    """Ejecutar migraciones en modo 'online'."""
+    """
+    Ejecuta migraciones en modo online.
+    Se conecta a la base de datos y aplica cambios directamente.
+    """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",

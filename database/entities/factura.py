@@ -14,6 +14,14 @@ from database.base import Base
 
 
 class Factura(Base):
+    """
+    Modelo ORM para la tabla ``facturas``.
+
+    Representa una factura de venta de un auto, vinculando cliente,
+    vendedor y vehículo. Incluye costos base, mantenimiento,
+    descuentos, total a pagar y datos de auditoría.
+    """
+
     __tablename__ = "facturas"
     __table_args__ = (UniqueConstraint("auto_id", name="uix_factura_auto_unico"),)
 

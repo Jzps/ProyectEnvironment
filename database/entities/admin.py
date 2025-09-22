@@ -6,6 +6,14 @@ from database.base import Base
 
 
 class Admin(Base):
+    """
+    Modelo ORM para la tabla ``admins``.
+
+    Representa un administrador con credenciales de acceso
+    y campos de auditoría (creación y actualización).
+    Incluye identificadores, usuario, contraseña y metadatos de cambios.
+    """
+
     __tablename__ = "admins"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
