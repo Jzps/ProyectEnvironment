@@ -12,25 +12,17 @@ class AdminService:
     """
 
     def __init__(self, db):
-        """
-        Inicializa el servicio con la sesión de base de datos.
-
-        Args:
-            db: Sesión de SQLAlchemy para interactuar con la base de datos.
-        """
-
         self.db = db
 
     def login(self, username: str, password: str):
         """
-        Verifica las credenciales de un administrador.
+        Verifica las credenciales del administrador.
 
         Args:
-            username (str): Nombre de usuario del admin.
-            password (str): Contraseña proporcionada.
-
+            username (str): Usuario.
+            password (str): Contraseña.
         Returns:
-            bool: True si las credenciales son correctas, False en caso contrario.
+            bool: True si son válidas, False en caso contrario.
         """
 
         admin = admin_crud.obtener_admin(self.db, username)
@@ -59,7 +51,7 @@ class AdminService:
         Returns:
             list[Admin]: Lista de objetos Admin.
         """
-        
+
         from database.entities.admin import Admin
 
         return self.db.query(Admin).all()

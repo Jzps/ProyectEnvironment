@@ -7,25 +7,24 @@ class Auto:
         modelo (str): Modelo del auto.
         precio (float): Precio en la moneda local.
     """
-    
+
     def __init__(self, marca, modelo, precio):
+        """
+        Inicializa un nuevo objeto Auto.
+
+        :param marca: Marca del auto.
+        :param modelo: Modelo del auto.
+        :param precio: Precio en la moneda local.
+        """
         self.marca = marca
         self.modelo = modelo
         self.precio = precio
-    """
-        Inicializa un nuevo objeto Auto.
-
-        Args:
-            marca (str): Marca del auto.
-            modelo (str): Modelo del auto.
-            precio (float): Precio en la moneda local.
-    """
 
     def mostrar_info(self):
-        return f"Marca: {self.marca}, Modelo: {self.modelo}, Precio: ${self.precio}"
-    """
-        Devuelve un texto con la información básica del auto.
-
-        Returns:
-            str: Información formateada de marca, modelo y precio.
         """
+        Devuelve la información básica del auto formateada.
+
+        :return: Texto con marca, modelo y precio.
+        :rtype: str
+        """
+        return f"Marca: {self.marca}, Modelo: {self.modelo}, Precio: ${self.precio}"

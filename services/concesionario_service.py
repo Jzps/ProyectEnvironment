@@ -14,22 +14,17 @@ from uuid import UUID
 
 class Concesionario:
     """
-    Servicio principal de concesionario para gestionar autos, clientes, empleados,
-    ventas y mantenimientos.
-
-    Esta clase actúa como capa de negocio central, coordinando operaciones
-    entre servicios y el CRUD de autos.
+    Servicio central para gestionar autos, clientes,
+    empleados, ventas y mantenimientos.
     """
 
     def __init__(self, db=None):
         """
-        Inicializa el concesionario con la sesión de base de datos y los servicios
-        relacionados.
+        Constructor del concesionario.
 
         Args:
-            db: Sesión de SQLAlchemy (opcional). Si no se proporciona, se crea una nueva.
+            db: Sesión de SQLAlchemy (opcional). Si no se pasa, se crea una nueva.
         """
-
         self.db = db or SessionLocal()
         self.cliente_service = ClienteService(self.db)
         self.empleado_service = EmpleadoService(self.db)
@@ -38,13 +33,12 @@ class Concesionario:
 
     def comprar_auto(self, auto, usuario_id: UUID | None = None):
         """
-        Registra la compra de un auto y lo agrega a la base de datos.
+        Registra la compra de un auto y lo almacena en la BD.
 
         Args:
-            auto: Objeto auto a registrar.
-            usuario_id (UUID | None): ID del usuario que realiza la compra.
+            auto: Objeto del auto.
+            usuario_id (UUID | None): Usuario que lo registra.
         """
-
         auto_schema = AutoCreate(
             marca=auto.marca,
             modelo=auto.modelo,
@@ -56,13 +50,6 @@ class Concesionario:
         print(f"Se ha comprado: {auto.mostrar_info()}")
 
     def mostrar_autos(self):
-        """
-        Muestra en consola los autos disponibles para la venta.
-
-        Returns:
-            list: Lista de autos disponibles.
-        """
-
         autos = auto_crud.obtener_autos(self.db, disponibles_only=True)
         if not autos:
             print("No hay autos disponibles.")
@@ -72,10 +59,6 @@ class Concesionario:
         return autos
 
     def mostrar_autos_vendidos(self):
-        """
-        Muestra en consola los autos que ya han sido vendidos.
-        """
-
         autos = auto_crud.obtener_autos_vendidos(self.db)
         if not autos:
             print("No hay autos vendidos.")
@@ -86,13 +69,13 @@ class Concesionario:
 
     def vender_auto(self, indice: int, usuario_id: UUID | None = None):
         """
-        Vende un auto seleccionado, genera la factura y marca el auto como vendido.
+        Vende un auto disponible, asigna cliente y vendedor,
+        y genera la factura correspondiente.
 
         Args:
-            indice (int): Índice del auto a vender (según listado disponible).
-            usuario_id (UUID | None): ID del usuario que realiza la venta.
+            indice (int): Índice del auto.
+            usuario_id (UUID | None): Usuario que realiza la venta.
         """
-
         autos = auto_crud.obtener_autos(self.db, disponibles_only=True)
         if not (0 <= indice - 1 < len(autos)):
             print("Índice inválido, no se pudo vender el auto.")
@@ -167,13 +150,12 @@ class Concesionario:
 
     def dar_mantenimiento(self, indice: int, usuario_id: UUID | None = None):
         """
-        Registra un mantenimiento para un auto seleccionado con un técnico específico.
+        Registra un mantenimiento de auto con un técnico asignado.
 
         Args:
-            indice (int): Índice del auto a mantener (según listado completo).
-            usuario_id (UUID | None): ID del usuario que realiza el mantenimiento.
+            indice (int): Índice del auto.
+            usuario_id (UUID | None): Usuario que lo registra.
         """
-        
         autos_all = auto_crud.obtener_autos(self.db, disponibles_only=False)
         if not (0 <= indice - 1 < len(autos_all)):
             print("Índice inválido, no se pudo dar mantenimiento.")

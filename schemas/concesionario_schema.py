@@ -1,11 +1,3 @@
-"""
-Esquemas Pydantic para la entidad Concesionario.
-
-Proporciona modelos para:
-- Validar los datos de entrada al crear un concesionario.
-- Representar la información de salida en las respuestas de la API.
-"""
-
 from pydantic import BaseModel
 from uuid import UUID
 from datetime import datetime
@@ -28,7 +20,7 @@ class ConcesionarioBase(BaseModel):
 
 class ConcesionarioCreate(ConcesionarioBase):
     """
-    Esquema para la creación de un concesionario.
+    Esquema de entrada para la creación de concesionarios.
 
     Hereda de:
         ConcesionarioBase: Incluye todos los campos necesarios para registrar un concesionario.
@@ -39,14 +31,14 @@ class ConcesionarioCreate(ConcesionarioBase):
 
 class ConcesionarioOut(ConcesionarioBase):
     """
-    Esquema de salida para representar la información de un concesionario en las respuestas de la API.
+    Esquema de salida para representar un concesionario en las respuestas de la API.
 
     Atributos adicionales:
         id (UUID): Identificador único del concesionario.
-        id_usuario_creacion (UUID | None): ID del usuario que creó el registro.
-        id_usuario_edicion (UUID | None): ID del usuario que realizó la última modificación.
+        id_usuario_creacion (UUID | None): Identificador del usuario que creó el registro.
+        id_usuario_edicion (UUID | None): Identificador del usuario que realizó la última edición.
         fecha_creacion (datetime | None): Fecha y hora de creación del registro.
-        fecha_actualizacion (datetime | None): Fecha y hora de la última actualización del registro.
+        fecha_actualizacion (datetime | None): Fecha y hora de la última actualización.
     """
 
     id: UUID
@@ -57,7 +49,8 @@ class ConcesionarioOut(ConcesionarioBase):
 
     class Config:
         """
-        Configuración de Pydantic para permitir la conversión
-        desde objetos ORM (por ejemplo, modelos de SQLAlchemy).
+        Configuración de Pydantic para habilitar la conversión desde
+        objetos ORM (por ejemplo, instancias de SQLAlchemy) a este esquema.
         """
+
         from_attributes = True

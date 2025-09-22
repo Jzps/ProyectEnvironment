@@ -1,10 +1,3 @@
-"""
-Esquemas Pydantic para la entidad Auto.
-
-Define los modelos de datos para validar la creación de autos y
-para la representación de salida en las respuestas de la API.
-"""
-
 from pydantic import BaseModel
 from uuid import UUID
 from datetime import datetime
@@ -19,7 +12,7 @@ class AutoBase(BaseModel):
         modelo (str): Modelo del automóvil.
         precio (float): Precio del automóvil.
         tipo (str): Tipo o categoría del automóvil (por ejemplo, eléctrico, usado, etc.).
-        extra (str | None): Información adicional u opcional del auto.
+        extra (str | None): Información adicional u opcional del automóvil.
     """
 
     marca: str
@@ -31,10 +24,10 @@ class AutoBase(BaseModel):
 
 class AutoCreate(AutoBase):
     """
-    Esquema de datos para la creación de un automóvil.
+    Esquema de entrada para la creación de un automóvil.
 
     Hereda de:
-        AutoBase: Incluye todos los campos básicos necesarios para crear un auto.
+        AutoBase: Incluye los campos necesarios para registrar un automóvil.
     """
 
     pass
@@ -45,10 +38,10 @@ class AutoOut(AutoBase):
     Esquema de salida para representar un automóvil en las respuestas de la API.
 
     Atributos adicionales:
-        id (UUID): Identificador único del auto.
-        vendido (bool): Indica si el auto ya fue vendido.
-        id_usuario_creacion (UUID | None): ID del usuario que creó el registro.
-        id_usuario_edicion (UUID | None): ID del usuario que realizó la última edición.
+        id (UUID): Identificador único del automóvil.
+        vendido (bool): Indica si el automóvil ya fue vendido.
+        id_usuario_creacion (UUID | None): Identificador del usuario que creó el registro.
+        id_usuario_edicion (UUID | None): Identificador del usuario que realizó la última edición.
         fecha_creacion (datetime | None): Fecha y hora de creación del registro.
         fecha_actualizacion (datetime | None): Fecha y hora de la última actualización.
     """
@@ -62,8 +55,8 @@ class AutoOut(AutoBase):
 
     class Config:
         """
-        Configuración de Pydantic para permitir la conversión desde
-        objetos ORM (por ejemplo, modelos de SQLAlchemy).
+        Configuración de Pydantic para habilitar la conversión de
+        objetos ORM (por ejemplo, instancias de SQLAlchemy) a este esquema.
         """
-        
+
         from_attributes = True

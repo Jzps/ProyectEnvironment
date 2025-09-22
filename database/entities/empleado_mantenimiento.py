@@ -9,32 +9,10 @@ class EmpleadoMantenimiento(Base):
     """
     Modelo ORM para la tabla ``empleados_mantenimiento``.
 
-    Representa a un empleado especializado en el área de mantenimiento
-    de vehículos, indicando el tipo de carros que atiende y datos de
-    auditoría de creación y actualización.
-
-    Atributos
-    ----------
-    empleado_id : UUID
-        Identificador único del empleado, clave primaria y
-        llave foránea que referencia a ``empleados.id``.
-    tipo_carro : str
-        Tipo de vehículo en el que el empleado está especializado
-        para realizar mantenimiento (por ejemplo: "eléctrico", "diésel",
-        "gasolina", "híbrido").
-
-    id_usuario_creacion : UUID | None
-        Identificador del usuario que creó el registro, si corresponde.
-    id_usuario_edicion : UUID | None
-        Identificador del usuario que realizó la última edición, si corresponde.
-    fecha_creacion : datetime
-        Fecha y hora (UTC) en que se creó el registro. Se asigna automáticamente.
-    fecha_actualizacion : datetime | None
-        Fecha y hora (UTC) de la última actualización del registro.
-        Se actualiza automáticamente en cada modificación; puede ser nula
-        si nunca se ha editado.
+    Representa a un empleado especializado en mantenimiento de vehículos,
+    indicando el tipo de carro que atiende y datos de auditoría.
     """
-    
+
     __tablename__ = "empleados_mantenimiento"
 
     empleado_id = Column(

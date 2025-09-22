@@ -8,33 +8,23 @@ class FacturaService:
     """
     Servicio para gestionar facturas de autos.
 
-    Permite crear facturas, listar todas las facturas registradas y eliminarlas.
-    Calcula automáticamente el total considerando mantenimientos y descuentos.
+    Permite crearlas, listarlas y eliminarlas,
+    calculando el total con base en mantenimientos y descuentos.
     """
 
     def __init__(self, db=None):
         """
-        Inicializa el servicio de facturas con una sesión de base de datos.
-
-        Args:
-            db: Sesión de SQLAlchemy (opcional). Si no se proporciona, se crea una nueva.
+        Inicializa el servicio con una sesión de base de datos.
         """
-
         self.db = db or SessionLocal()
 
     def crear_factura(self, factura: FacturaCreate, usuario_id: UUID | None = None):
         """
-        Crea una factura para un auto vendido y calcula automáticamente
-        el costo de mantenimientos y el total.
+        Genera una factura para un auto vendido.
 
-        Args:
-            factura (FacturaCreate): Datos de la factura a crear.
-            usuario_id (UUID | None): ID del usuario que realiza la creación.
-
-        Returns:
-            Factura creada o None si el auto no existe o no está vendido.
+        Calcula el costo total sumando el precio base, los mantenimientos
+        y aplicando el descuento indicado.
         """
-
         auto = auto_crud.obtener_auto_por_id(self.db, factura.auto_id)
         if not auto or not auto.vendido:
             print("El auto no existe o no está vendido.")
@@ -53,24 +43,9 @@ class FacturaService:
         return factura_crud.crear_factura(self.db, factura, usuario_id)
 
     def listar_facturas(self):
-        """
-        Obtiene la lista de todas las facturas registradas.
-
-        Returns:
-            list: Lista de facturas.
-        """
-
+        """Devuelve todas las facturas registradas."""
         return factura_crud.obtener_facturas(self.db)
 
     def eliminar_factura(self, factura_id: UUID):
-        """
-        Elimina una factura por su ID.
-
-        Args:
-            factura_id (UUID): ID de la factura a eliminar.
-
-        Returns:
-            Factura eliminada o None si no existe.
-        """
-        
+        """Elimina una factura por su ID."""
         return factura_crud.eliminar_factura(self.db, factura_id)

@@ -1,9 +1,3 @@
-"""
-Funciones CRUD para la entidad Especialidad.
-
-Este módulo permite crear y consultar especialidades en la base de datos.
-"""
-
 import uuid
 from datetime import datetime
 from sqlalchemy.orm import Session
@@ -49,5 +43,5 @@ def obtener_especialidades(db: Session):
     :return: Lista de objetos Especialidad.
     :rtype: list[database.entities.especialidad.Especialidad]
     """
-    
+
     return db.query(Especialidad).all()

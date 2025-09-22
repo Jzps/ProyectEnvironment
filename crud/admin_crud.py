@@ -1,9 +1,3 @@
-"""
-Funciones CRUD para la entidad Admin.
-
-Este módulo define las operaciones básicas para crear y obtener
-administradores en la base de datos.
-"""
 import uuid
 from datetime import datetime
 from sqlalchemy.orm import Session
@@ -14,18 +8,10 @@ from uuid import UUID
 
 def crear_admin(db: Session, admin: AdminCreate, usuario_id: UUID | None = None):
     """
-    Crea un nuevo administrador en la base de datos.
-
-    :param db: Sesión activa de SQLAlchemy.
-    :type db: sqlalchemy.orm.Session
-    :param admin: Datos de entrada para crear el administrador (username y password).
-    :type admin: schemas.admin_schema.AdminCreate
-    :param usuario_id: ID del usuario que realiza la creación (opcional).
-    :type usuario_id: uuid.UUID | None
-    :return: Objeto Admin recién creado.
-    :rtype: database.entities.Admin
+    Crea un nuevo administrador y lo guarda en la base de datos.
+    Registra username, password, usuario creador y fecha de creación.
+    Retorna el objeto Admin creado.
     """
-    
     db_admin = Admin(
         id=uuid.uuid4(),
         username=admin.username,
@@ -40,15 +26,8 @@ def crear_admin(db: Session, admin: AdminCreate, usuario_id: UUID | None = None)
 
 
 def obtener_admin(db: Session, username: str):
-    return db.query(Admin).filter(Admin.username == username).first()
-
-"""
-    Obtiene un administrador por su nombre de usuario.
-
-    :param db: Sesión activa de SQLAlchemy.
-    :type db: sqlalchemy.orm.Session
-    :param username: Nombre de usuario del administrador a buscar.
-    :type username: str
-    :return: Objeto Admin si existe, en caso contrario None.
-    :rtype: database.entities.Admin | None
     """
+    Busca un administrador por su nombre de usuario.
+    Retorna el objeto Admin si existe, en caso contrario None.
+    """
+    return db.query(Admin).filter(Admin.username == username).first()

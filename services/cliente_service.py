@@ -6,55 +6,49 @@ from uuid import UUID
 
 class ClienteService:
     """
-    Servicio para gestionar operaciones relacionadas con los clientes.
+    Servicio para manejar operaciones de clientes.
 
-    Proporciona métodos para registrar, listar y eliminar clientes,
-    actuando como capa intermedia entre la base de datos y la lógica de negocio.
+    Métodos: registrar, listar y eliminar clientes.
+    Funciona como capa intermedia entre la BD y la lógica de negocio.
     """
 
     def __init__(self, db=None):
         """
-        Inicializa el servicio con una sesión de base de datos.
+        Constructor del servicio.
 
         Args:
-            db: Sesión de SQLAlchemy (opcional). Si no se proporciona, se crea una nueva.
+            db: Sesión de SQLAlchemy (opcional). Si no se pasa, se crea una nueva.
         """
-
         self.db = db or SessionLocal()
 
     def registrar_cliente(self, cliente: ClienteCreate, usuario_id: UUID | None = None):
         """
-        Registra un nuevo cliente en la base de datos.
+        Registra un cliente en la BD.
 
         Args:
-            cliente (ClienteCreate): Datos del cliente a registrar.
-            usuario_id (UUID | None): ID del usuario que realiza la creación (opcional).
-
+            cliente (ClienteCreate): Datos del cliente.
+            usuario_id (UUID | None): ID del usuario que lo crea (opcional).
         Returns:
-            Cliente: Objeto Cliente recién creado.
+            Cliente: Cliente creado.
         """
-
         return cliente_crud.crear_cliente(self.db, cliente, usuario_id)
 
     def listar_clientes(self):
         """
-        Retorna todos los clientes existentes en la base de datos.
+        Obtiene todos los clientes de la BD.
 
         Returns:
-            list[Cliente]: Lista de objetos Cliente.
+            list[Cliente]: Lista de clientes.
         """
-
         return cliente_crud.obtener_clientes(self.db)
 
     def eliminar_cliente(self, cliente_id: UUID):
         """
-        Elimina un cliente de la base de datos por su ID.
+        Elimina un cliente por ID.
 
         Args:
-            cliente_id (UUID): ID del cliente a eliminar.
-
+            cliente_id (UUID): ID del cliente.
         Returns:
-            Cliente | None: Objeto Cliente eliminado si existía, o None si no se encontró.
+            Cliente | None: Cliente eliminado o None si no existe.
         """
-         
         return cliente_crud.eliminar_cliente(self.db, cliente_id)

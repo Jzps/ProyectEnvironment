@@ -9,40 +9,10 @@ class Cliente(Base):
     """
     Modelo ORM para la tabla ``clientes``.
 
-    Representa a un cliente del concesionario, incluyendo sus datos de
-    identificación y contacto, así como la información de auditoría de
-    creación y actualización del registro.
-
-    Atributos
-    ----------
-    id : UUID
-        Identificador único primario, generado automáticamente.
-    nombre : str
-        Nombre del cliente.
-    apellido : str
-        Apellido del cliente.
-    dni : str
-        Documento de identidad o número único de identificación.
-        Debe ser único en la base de datos.
-    correo : str | None
-        Correo electrónico de contacto (opcional).
-    telefono : str | None
-        Número de teléfono de contacto (opcional).
-    direccion : str | None
-        Dirección de residencia o de contacto (opcional).
-
-    id_usuario_creacion : UUID | None
-        Identificador del usuario que creó el registro, si corresponde.
-    id_usuario_edicion : UUID | None
-        Identificador del usuario que realizó la última edición, si corresponde.
-    fecha_creacion : datetime
-        Fecha y hora (UTC) en que se creó el registro. Se asigna automáticamente.
-    fecha_actualizacion : datetime | None
-        Fecha y hora (UTC) de la última actualización del registro.
-        Se actualiza automáticamente en cada modificación; puede ser nula
-        si nunca se ha editado.
+    Representa a un cliente del concesionario con datos de identificación
+    y contacto. Incluye campos de auditoría para creación y actualizaciones.
     """
-    
+
     __tablename__ = "clientes"
 
     id = Column(

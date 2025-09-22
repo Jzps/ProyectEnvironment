@@ -1,12 +1,3 @@
-"""
-Esquemas Pydantic para la entidad Empleado y sus especializaciones
-(Vendedor y Mantenimiento).
-
-Incluye modelos para:
-- Validar datos de entrada al crear empleados y roles específicos.
-- Representar la información en las respuestas de la API.
-"""
-
 from pydantic import BaseModel
 from datetime import date, datetime
 from uuid import UUID
@@ -37,9 +28,9 @@ class EmpleadoBase(BaseModel):
 
 class EmpleadoCreate(EmpleadoBase):
     """
-    Esquema para la creación de un empleado.
+    Esquema de entrada para la creación de empleados.
 
-    Hereda:
+    Hereda de:
         EmpleadoBase: Incluye todos los campos necesarios para registrar un empleado.
     """
 
@@ -48,14 +39,14 @@ class EmpleadoCreate(EmpleadoBase):
 
 class EmpleadoOut(EmpleadoBase):
     """
-    Esquema de salida para representar la información de un empleado en las respuestas de la API.
+    Esquema de salida para representar un empleado en las respuestas de la API.
 
     Atributos adicionales:
         id (UUID): Identificador único del empleado.
-        id_usuario_creacion (UUID | None): ID del usuario que creó el registro.
-        id_usuario_edicion (UUID | None): ID del usuario que realizó la última modificación.
+        id_usuario_creacion (UUID | None): Identificador del usuario que creó el registro.
+        id_usuario_edicion (UUID | None): Identificador del usuario que realizó la última edición.
         fecha_creacion (datetime | None): Fecha y hora de creación del registro.
-        fecha_actualizacion (datetime | None): Fecha y hora de la última actualización del registro.
+        fecha_actualizacion (datetime | None): Fecha y hora de la última actualización.
     """
 
     id: UUID
@@ -66,21 +57,21 @@ class EmpleadoOut(EmpleadoBase):
 
     class Config:
         """
-        Configuración de Pydantic para permitir la conversión
-        desde objetos ORM (por ejemplo, modelos de SQLAlchemy).
+        Configuración de Pydantic para habilitar la conversión desde
+        objetos ORM (por ejemplo, modelos de SQLAlchemy).
         """
-         
+
         from_attributes = True
 
 
 class VendedorCreate(BaseModel):
     """
-    Esquema para la creación de un registro de vendedor.
+    Esquema de entrada para la creación de registros de vendedores.
 
     Atributos:
         empleado_id (UUID): Identificador del empleado que será marcado como vendedor.
     """
-     
+
     empleado_id: UUID
 
 
@@ -95,18 +86,21 @@ class VendedorOut(BaseModel):
     empleado_id: UUID
 
     class Config:
-        """Permite la conversión de modelos ORM a este esquema."""
+        """
+        Configuración de Pydantic para habilitar la conversión desde
+        objetos ORM (por ejemplo, modelos de SQLAlchemy).
+        """
 
         from_attributes = True
 
 
 class MantenimientoEmpleadoCreate(BaseModel):
     """
-    Esquema para crear un registro de empleado de mantenimiento.
+    Esquema de entrada para la creación de empleados de mantenimiento.
 
     Atributos:
         empleado_id (UUID): Identificador del empleado asignado al mantenimiento.
-        tipo_carro (str): Tipo de carro o categoría de vehículos en los que está especializado.
+        tipo_carro (str): Tipo o categoría de vehículos en los que está especializado.
     """
 
     empleado_id: UUID
@@ -118,10 +112,10 @@ class MantenimientoEmpleadoOut(MantenimientoEmpleadoCreate):
     Esquema de salida para representar un empleado de mantenimiento.
 
     Atributos adicionales:
-        id_usuario_creacion (UUID | None): ID del usuario que creó el registro.
-        id_usuario_edicion (UUID | None): ID del usuario que realizó la última modificación.
+        id_usuario_creacion (UUID | None): Identificador del usuario que creó el registro.
+        id_usuario_edicion (UUID | None): Identificador del usuario que realizó la última edición.
         fecha_creacion (datetime | None): Fecha y hora de creación del registro.
-        fecha_actualizacion (datetime | None): Fecha y hora de la última actualización del registro.
+        fecha_actualizacion (datetime | None): Fecha y hora de la última actualización.
     """
 
     id_usuario_creacion: UUID | None = None
@@ -130,5 +124,9 @@ class MantenimientoEmpleadoOut(MantenimientoEmpleadoCreate):
     fecha_actualizacion: datetime | None = None
 
     class Config:
-        """Permite la conversión de modelos ORM a este esquema."""
+        """
+        Configuración de Pydantic para habilitar la conversión desde
+        objetos ORM (por ejemplo, modelos de SQLAlchemy).
+        """
+
         from_attributes = True

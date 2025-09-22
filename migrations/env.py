@@ -1,26 +1,3 @@
-"""
-Archivo de configuración de Alembic para migraciones de la base de datos.
-
-Este archivo se encarga de:
-1. Cargar variables de entorno desde un archivo `.env` (como DATABASE_URL).
-2. Configurar Alembic para ejecutar migraciones en modo offline o online.
-3. Registrar el metadata de SQLAlchemy para que Alembic pueda generar
-   y aplicar cambios en la base de datos.
-4. Importar todas las entidades de la base de datos necesarias para
-   reflejar el esquema actual.
-
-Funciones principales:
-- run_migrations_offline(): Ejecuta migraciones sin conexión a la base de datos.
-  Genera SQL en bruto que puede ejecutarse manualmente.
-- run_migrations_online(): Ejecuta migraciones conectándose directamente
-  a la base de datos.
-
-El archivo utiliza:
-- SQLAlchemy para la gestión del motor y las conexiones.
-- Alembic para la gestión de migraciones.
-- python-dotenv para cargar la configuración sensible.
-"""
-
 from dotenv import load_dotenv
 import os
 from logging.config import fileConfig
@@ -62,7 +39,10 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
-    """Ejecutar migraciones en modo 'offline'."""
+    """
+    Ejecuta migraciones en modo offline.
+    Genera el SQL sin conectarse a la base de datos.
+    """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -76,7 +56,10 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    """Ejecutar migraciones en modo 'online'."""
+    """
+    Ejecuta migraciones en modo online.
+    Se conecta a la base de datos y aplica cambios directamente.
+    """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
