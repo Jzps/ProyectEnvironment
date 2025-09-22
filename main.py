@@ -1,3 +1,11 @@
+"""
+Script principal del concesionario.
+
+Inicializa la base de datos, gestiona la sesión y muestra el menú principal.
+Incluye submenús para clientes, empleados, autos y mantenimientos.
+Si no existe administrador registrado, permite crear uno al inicio.
+"""
+
 from database import SessionLocal, init_db
 from services import (
     Concesionario,
@@ -21,7 +29,13 @@ db = SessionLocal()
 
 
 def menu_clientes(db):
-    """Menú para gestionar clientes"""
+    """
+    Menú para gestionar clientes.
+
+    Permite registrar, listar y eliminar clientes mediante ClienteService.
+    El menú se ejecuta en bucle hasta que el usuario decida volver.
+    """
+
     cliente_service = ClienteService(db)
     while True:
         print("\n--- MENÚ CLIENTES ---")
@@ -60,9 +74,30 @@ def menu_clientes(db):
                     print(f"{c.id}. {c.nombre} {c.apellido} - DNI: {c.dni}")
 
         elif opcion == "3":
-            cliente_id = int(input("ID de cliente a eliminar: "))
-            cliente_service.eliminar_cliente(cliente_id)
-            print("Cliente eliminado (si existía).")
+            clientes = cliente_service.listar_clientes()
+            if not clientes:
+                print("No hay clientes registrados.")
+            else:
+                print("\n--- LISTA DE CLIENTES ---")
+                for i, c in enumerate(clientes, start=1):
+                    print(f"{i}. {c.nombre} {c.apellido} - DNI: {c.dni}")
+
+                try:
+                    seleccion = int(
+                        input("Seleccione el número del cliente a eliminar: ")
+                    )
+                    if 1 <= seleccion <= len(clientes):
+                        cliente = clientes[seleccion - 1]
+                        cliente_service.eliminar_cliente(
+                            cliente.id
+                        )  # Pasamos el UUID real
+                        print(
+                            f"Cliente {cliente.nombre} {cliente.apellido} eliminado con éxito."
+                        )
+                    else:
+                        print("Selección inválida.")
+                except ValueError:
+                    print("Entrada inválida. Debe ser un número.")
 
         elif opcion == "4":
             break
@@ -71,6 +106,12 @@ def menu_clientes(db):
 
 
 def menu_empleados(db):
+    """
+    Menú para gestionar empleados.
+
+    Permite registrar empleados, listarlos y asignarlos como vendedores o técnicos.
+    Se ejecuta en bucle hasta que el usuario decida volver.
+    """
 
     empleado_service = EmpleadoService(db)
     while True:
@@ -172,7 +213,13 @@ def menu_empleados(db):
 
 
 def menu_mantenimientos(db):
-    """Menú para mostrar mantenimientos registrados"""
+    """
+    Menú para gestionar mantenimientos de autos.
+
+    Permite listar los mantenimientos registrados.
+    Se repite en bucle hasta que el usuario decida volver.
+    """
+
     mantenimiento_service = MantenimientoService(db)
     while True:
         print("\n--- MENÚ MANTENIMIENTOS ---")
@@ -198,7 +245,13 @@ def menu_mantenimientos(db):
 
 
 def menu(db):
-    """Menú principal del sistema"""
+    """
+    Menú principal del sistema.
+
+    Integra los submenús de autos, clientes, empleados y mantenimientos.
+    Se mantiene en bucle hasta que el usuario decide salir.
+    """
+
     concesionario = Concesionario(db)
 
     while True:
@@ -289,6 +342,7 @@ def menu(db):
 
 
 if __name__ == "__main__":
+
     db = SessionLocal()
     admin_service = AdminService(db)
 
