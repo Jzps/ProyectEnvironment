@@ -1,7 +1,7 @@
 # Archivos de entorno (contiene credenciales)
 .env
 
-# Configuración de VS Code (solo local tuya)
+# Configuración de VS Code 
 .vscode/
 
 # Archivos de Python

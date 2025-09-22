@@ -1,0 +1,220 @@
+"""create all tables
+
+Revision ID: 59c263b93dc4
+Revises: 
+Create Date: 2025-09-18 20:02:13.599583
+
+"""
+
+"""
+Migración inicial: creación de todas las tablas principales del sistema de concesionarios.
+
+Revision ID: 59c263b93dc4
+Revises: None
+Create Date: 2025-09-18 20:02:13.599583
+
+Tablas creadas:
+- admins: Administradores del sistema.
+- autos: Autos disponibles o vendidos, con tipo y atributos extra.
+- clientes: Información de clientes registrados.
+- concesionarios: Concesionarios disponibles.
+- especialidades: Especialidades de técnicos de mantenimiento.
+- empleados: Empleados generales asociados a concesionarios.
+- empleados_mantenimiento: Empleados técnicos con tipo de carro asignado.
+- empleados_vendedor: Empleados vendedores.
+- empleado_mantenimiento_especialidad: Relación entre técnicos y sus especialidades.
+- facturas: Facturas generadas al vender autos.
+- mantenimientos: Registro de mantenimientos realizados a los autos.
+"""
+
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+
+
+revision: str = '59c263b93dc4'
+down_revision: Union[str, Sequence[str], None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+
+    """Aplicar migración: crea todas las tablas principales del sistema."""
+
+    op.create_table('admins',
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('username', sa.String(), nullable=False),
+    sa.Column('password', sa.String(), nullable=False),
+    sa.Column('id_usuario_creacion', sa.UUID(), nullable=True),
+    sa.Column('id_usuario_edicion', sa.UUID(), nullable=True),
+    sa.Column('fecha_creacion', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('fecha_actualizacion', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('username')
+    )
+    op.create_index(op.f('ix_admins_id'), 'admins', ['id'], unique=False)
+    op.create_table('autos',
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('marca', sa.String(), nullable=False),
+    sa.Column('modelo', sa.String(), nullable=False),
+    sa.Column('precio', sa.Float(), nullable=False),
+    sa.Column('tipo', sa.String(), nullable=False),
+    sa.Column('extra', sa.String(), nullable=True),
+    sa.Column('vendido', sa.Boolean(), nullable=True),
+    sa.Column('id_usuario_creacion', sa.UUID(), nullable=True),
+    sa.Column('id_usuario_edicion', sa.UUID(), nullable=True),
+    sa.Column('fecha_creacion', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('fecha_actualizacion', sa.DateTime(timezone=True), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('id')
+    )
+    op.create_index(op.f('ix_autos_marca'), 'autos', ['marca'], unique=False)
+    op.create_index(op.f('ix_autos_modelo'), 'autos', ['modelo'], unique=False)
+    op.create_table('clientes',
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('nombre', sa.String(), nullable=False),
+    sa.Column('apellido', sa.String(), nullable=False),
+    sa.Column('dni', sa.String(), nullable=False),
+    sa.Column('correo', sa.String(), nullable=True),
+    sa.Column('telefono', sa.String(), nullable=True),
+    sa.Column('direccion', sa.String(), nullable=True),
+    sa.Column('id_usuario_creacion', sa.UUID(), nullable=True),
+    sa.Column('id_usuario_edicion', sa.UUID(), nullable=True),
+    sa.Column('fecha_creacion', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('fecha_actualizacion', sa.DateTime(timezone=True), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('dni'),
+    sa.UniqueConstraint('id')
+    )
+    op.create_table('concesionarios',
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('nombre', sa.String(), nullable=False),
+    sa.Column('ubicacion', sa.String(), nullable=True),
+    sa.Column('telefono', sa.String(), nullable=True),
+    sa.Column('id_usuario_creacion', sa.UUID(), nullable=True),
+    sa.Column('id_usuario_edicion', sa.UUID(), nullable=True),
+    sa.Column('fecha_creacion', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('fecha_actualizacion', sa.DateTime(timezone=True), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('id')
+    )
+    op.create_table('especialidades',
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('nombre', sa.String(), nullable=False),
+    sa.Column('id_usuario_creacion', sa.UUID(), nullable=True),
+    sa.Column('id_usuario_edicion', sa.UUID(), nullable=True),
+    sa.Column('fecha_creacion', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('fecha_actualizacion', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('nombre')
+    )
+    op.create_index(op.f('ix_especialidades_id'), 'especialidades', ['id'], unique=False)
+    op.create_table('empleados',
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('nombre', sa.String(), nullable=False),
+    sa.Column('apellido', sa.String(), nullable=False),
+    sa.Column('dni', sa.String(), nullable=False),
+    sa.Column('correo', sa.String(), nullable=True),
+    sa.Column('telefono', sa.String(), nullable=True),
+    sa.Column('fecha_contratacion', sa.Date(), nullable=False),
+    sa.Column('concesionario_id', sa.UUID(), nullable=True),
+    sa.Column('id_usuario_creacion', sa.UUID(), nullable=True),
+    sa.Column('id_usuario_edicion', sa.UUID(), nullable=True),
+    sa.Column('fecha_creacion', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('fecha_actualizacion', sa.DateTime(timezone=True), nullable=True),
+    sa.ForeignKeyConstraint(['concesionario_id'], ['concesionarios.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('dni'),
+    sa.UniqueConstraint('id')
+    )
+    op.create_table('empleados_mantenimiento',
+    sa.Column('empleado_id', sa.UUID(), nullable=False),
+    sa.Column('tipo_carro', sa.String(), nullable=False),
+    sa.Column('id_usuario_creacion', sa.UUID(), nullable=True),
+    sa.Column('id_usuario_edicion', sa.UUID(), nullable=True),
+    sa.Column('fecha_creacion', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('fecha_actualizacion', sa.DateTime(timezone=True), nullable=True),
+    sa.ForeignKeyConstraint(['empleado_id'], ['empleados.id'], ),
+    sa.PrimaryKeyConstraint('empleado_id')
+    )
+    op.create_table('empleados_vendedor',
+    sa.Column('empleado_id', sa.UUID(), nullable=False),
+    sa.Column('id_usuario_creacion', sa.UUID(), nullable=True),
+    sa.Column('id_usuario_edicion', sa.UUID(), nullable=True),
+    sa.Column('fecha_creacion', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('fecha_actualizacion', sa.DateTime(timezone=True), nullable=True),
+    sa.ForeignKeyConstraint(['empleado_id'], ['empleados.id'], ),
+    sa.PrimaryKeyConstraint('empleado_id')
+    )
+    op.create_table('empleado_mantenimiento_especialidad',
+    sa.Column('empleado_id', sa.UUID(), nullable=False),
+    sa.Column('especialidad_id', sa.UUID(), nullable=False),
+    sa.ForeignKeyConstraint(['empleado_id'], ['empleados_mantenimiento.empleado_id'], ),
+    sa.ForeignKeyConstraint(['especialidad_id'], ['especialidades.id'], ),
+    sa.PrimaryKeyConstraint('empleado_id', 'especialidad_id')
+    )
+    op.create_table('facturas',
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('fecha_emision', sa.Date(), nullable=False),
+    sa.Column('cliente_id', sa.UUID(), nullable=False),
+    sa.Column('empleado_id', sa.UUID(), nullable=False),
+    sa.Column('auto_id', sa.UUID(), nullable=False),
+    sa.Column('precio_carro_base', sa.Float(), nullable=False),
+    sa.Column('costo_mantenimiento', sa.Float(), nullable=False),
+    sa.Column('descuento', sa.Float(), nullable=False),
+    sa.Column('total', sa.Float(), nullable=False),
+    sa.Column('observaciones', sa.String(), nullable=True),
+    sa.Column('id_usuario_creacion', sa.UUID(), nullable=True),
+    sa.Column('id_usuario_edicion', sa.UUID(), nullable=True),
+    sa.Column('fecha_creacion', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('fecha_actualizacion', sa.DateTime(timezone=True), nullable=True),
+    sa.ForeignKeyConstraint(['auto_id'], ['autos.id'], ),
+    sa.ForeignKeyConstraint(['cliente_id'], ['clientes.id'], ),
+    sa.ForeignKeyConstraint(['empleado_id'], ['empleados_vendedor.empleado_id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('auto_id', name='uix_factura_auto_unico'),
+    sa.UniqueConstraint('id')
+    )
+    op.create_table('mantenimientos',
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('auto_id', sa.UUID(), nullable=False),
+    sa.Column('empleado_id', sa.UUID(), nullable=False),
+    sa.Column('fecha', sa.Date(), nullable=False),
+    sa.Column('detalle', sa.String(), nullable=False),
+    sa.Column('costo', sa.Float(), nullable=False),
+    sa.Column('factura_id', sa.UUID(), nullable=True),
+    sa.Column('id_usuario_creacion', sa.UUID(), nullable=True),
+    sa.Column('id_usuario_edicion', sa.UUID(), nullable=True),
+    sa.Column('fecha_creacion', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('fecha_actualizacion', sa.DateTime(timezone=True), nullable=True),
+    sa.ForeignKeyConstraint(['auto_id'], ['autos.id'], ),
+    sa.ForeignKeyConstraint(['empleado_id'], ['empleados_mantenimiento.empleado_id'], ),
+    sa.ForeignKeyConstraint(['factura_id'], ['facturas.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('id')
+    )
+
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+
+    op.drop_table('mantenimientos')
+    op.drop_table('facturas')
+    op.drop_table('empleado_mantenimiento_especialidad')
+    op.drop_table('empleados_vendedor')
+    op.drop_table('empleados_mantenimiento')
+    op.drop_table('empleados')
+    op.drop_index(op.f('ix_especialidades_id'), table_name='especialidades')
+    op.drop_table('especialidades')
+    op.drop_table('concesionarios')
+    op.drop_table('clientes')
+    op.drop_index(op.f('ix_autos_modelo'), table_name='autos')
+    op.drop_index(op.f('ix_autos_marca'), table_name='autos')
+    op.drop_table('autos')
+    op.drop_index(op.f('ix_admins_id'), table_name='admins')
+    op.drop_table('admins')
+

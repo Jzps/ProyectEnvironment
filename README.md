@@ -1,115 +1,173 @@
-## Concesionario de Autos en Python
+# ¡¡¡¡¡IMPORTANTE!!!!!
 
-Este proyecto es un sistema de gestión para un concesionario de autos. Está desarrollado en Python y permite **comprar**, **vender**, **mostrar** y **dar mantenimiento** a autos de diferentes tipos: **nuevos**, **usados** y **eléctricos**.
+Para que el sistema funcione correctamente:
 
----
-
-## Estructura del Proyecto
-
-concesionario
-
-auto.py # Clase base Auto
-tipos_autos.py # Clases específicas: AutoNuevo, AutoUsado, AutoElectrico
-concesionario.py # Clase Concesionario que gestiona los autos
-main.py # Menú principal (punto de entrada)
-README.md # Este archivo
-Prueba.txt lugar donde compartir ideas a implementar
+  **Iniciar sesión con el usuario administrador por defecto**  
+   - **USUARIO:** Usuario  
+   - **CONTRASEÑA:** 123  
 
 ---
 
-## Requisitos Previos
+# 🚗 Concesionario de Autos en Python
 
-- Python 3.8 o superior instalado
-- No necesitas instalar librerías adicionales
+Este proyecto es un **sistema de gestión para un concesionario de autos**, desarrollado en **Python** con **SQLAlchemy** y **PostgreSQL (NeonDB)**.
 
-Puedes verificar la versión de Python ejecutando:
+Permite **registrar, vender, dar mantenimiento y administrar autos, clientes, empleados, facturas y mantenimientos** de forma estructurada.
+
+---
+
+## 📂 Estructura del Proyecto
 
 ```bash
-python --version
+ProyectEnvironment/
+│── autos/                   # Clases que representan los distintos tipos de autos
+│   ├── base.py              # Clase base Auto
+│   ├── tipos.py             # Subclases: AutoNuevo, AutoUsado, AutoElectrico
+│
+│── crud/                    # Operaciones CRUD directas sobre la base de datos
+│   ├── admin_crud.py
+│   ├── auto_crud.py
+│   ├── cliente_crud.py
+│   ├── concesionario_crud.py
+│   ├── empleado_crud.py
+│   ├── especialidad_crud.py
+│   ├── factura_crud.py
+│   ├── mantenimiento_crud.py
+│
+│── database/                # Configuración y entidades de la base de datos
+│   ├── base.py
+│   ├── config.py
+│   ├── db.py
+│   ├── init_db.py
+│   └── entities/            # Definición de modelos (tablas)
+│
+│── schemas/                 # Esquemas con Pydantic (validación de datos)
+│   ├── admin_schema.py
+│   ├── auto_schema.py
+│   ├── cliente_schema.py
+│   ├── concesionario_schema.py
+│   ├── empleado_schema.py
+│   ├── especialidad_schema.py
+│   ├── factura_schema.py
+│   ├── mantenimiento_schema.py
+│
+│── services/                # Lógica de negocio (intermediarios entre CRUD y main)
+│   ├── admin_service.py
+│   ├── cliente_service.py
+│   ├── concesionario_service.py
+│   ├── empleado_service.py
+│   ├── factura_service.py
+│   ├── mantenimiento_service.py
+│
+│── main.py                  # Menú principal (punto de entrada al sistema)
+│── reset_db.py              # Script opcional para reiniciar las tablas
+│── test_connection.py       # Script para probar conexión con la base de datos
+│── requirements.txt         # Dependencias necesarias
+│── README.md                # Documentación del proyecto
+```
 
 ---
 
-## Paso 1: Clonar el repositorio
+## ⚙️ Requisitos Previos
 
-Abre tu terminal y ejecuta el siguiente comando para clonar el proyecto:
+* **Python 3.10+**
+* **PostgreSQL** (se recomienda NeonDB en la nube)
+* Librerías listadas en `requirements.txt`
 
+Instala las dependencias con:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 🚀 Instalación y Ejecución
+
+1. **Clonar el repositorio**
+
+```bash
 git clone https://github.com/Jzps/ProyectEnvironment.git
+cd ProyectEnvironment
+```
 
-Reemplaza tu-usuario con tu nombre de usuario en GitHub (si lo subiste allí).
+2. **Configurar la base de datos**
 
-Luego, entra a la carpeta del proyecto:
+En el archivo `.env` debes definir tu conexión a Neon o Postgres local. Ejemplo:
 
-cd concesionario
+```env
+DATABASE_URL=postgresql+psycopg2://usuario:contraseña@host/dbname
+```
 
-## Paso 2: Ejecutar el programa
+3. **Inicializar la base de datos**
 
-Desde la carpeta donde está main.py, ejecuta:
+```bash
+python database/init_db.py
+```
 
+4. **Probar la conexión (opcional)**
+
+```bash
+python test_connection.py
+```
+
+5. **Ejecutar el programa**
+
+```bash
 python main.py
+```
 
-## Paso 3: Usar el programa
+---
 
-Una vez que el programa se ejecuta, verás este menú en consola:
+## 📖 Uso del Sistema
 
---- MENÚ CONCESIONARIO ---
-1. Comprar Auto
-2. Vender Auto
-3. Mostrar Autos
-4. Dar Mantenimiento
+### Menú Principal
+
+```text
+=== MENÚ PRINCIPAL ===
+1. Concesionario (Autos)
+2. Clientes
+3. Empleados
+4. Mantenimientos
 5. Salir
+```
 
-Opciones disponibles:
-
-## Comprar Auto
-
-Seleccionas si es nuevo, usado o eléctrico
-
-Ingresas los datos como marca, modelo, precio, etc.
-
-## Vender Auto
-
-Eliges el auto por índice y se elimina de la lista
-
-## Mostrar Autos
-
-Muestra todos los autos actualmente en el concesionario
-
-## Dar Mantenimiento
-
-Según el tipo de auto, se ofrecen diferentes opciones
-
-Salir
-
-Termina la ejecución del programa
+🔹 **Concesionario (Autos):** Comprar, vender, mostrar autos, registrar mantenimientos y listar autos vendidos.
+🔹 **Clientes:** Registrar, listar y eliminar clientes.
+🔹 **Empleados:** Registrar empleados, vendedores y técnicos de mantenimiento.
+🔹 **Mantenimientos:** Listar mantenimientos realizados.
+🔹 **Salir:** Termina el programa.
 
 ---
 
-## ¿Cómo funciona el código?
+## 📝 Lógica de Negocio
 
-Auto: Clase base con atributos comunes a todos los autos
+* **Autos:**
+  Representados por clases (`AutoNuevo`, `AutoUsado`, `AutoElectrico`), guardados en BD vía `auto_crud`.
 
-AutoNuevo, AutoUsado, AutoElectrico: Subclases con información y mantenimiento específico
+* **Clientes y Empleados:**
+  Gestión completa con validación de datos (`cliente_service`, `empleado_service`).
 
-Concesionario: Administra una lista de autos y operaciones sobre ellos
+* **Ventas:**
+  Al vender un auto se marca como vendido y se **genera automáticamente una factura** con datos del cliente, vendedor y auto.
 
-main.py: Contiene el menú interactivo que conecta todo el sistema
+* **Mantenimientos:**
+  Se asigna un técnico y se guarda el detalle y costo en la tabla correspondiente.
+
+* **Login de Administradores:**
+  El sistema incluye un **módulo de login** que permite validar credenciales antes de usar el sistema.
 
 ---
 
-## Ideas para futuras mejoras
+## 👨‍💻 Autores
 
-Guardar y cargar autos desde un archivo
-
-Añadir una interfaz gráfica
+* Juan Pablo Gutiérrez Vargas
+* Juan Felipe Ospina Agudelo
 
 ---
 
-## Licencia
+## 📜 Licencia
 
-Este proyecto puede ser usado y modificado libremente con fines educativos o personales.
+Este proyecto puede ser usado y modificado con fines **educativos y personales**.
 
-Autores
-
-Desarrollado por:
-Juan Pablo Gutierrez Vargas 
-Juan Felipe Ospina Agudelo
+---

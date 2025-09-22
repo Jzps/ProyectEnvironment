@@ -1,25 +1,50 @@
 from database.config import SessionLocal
 from crud import auto_crud
 from schemas.auto_schema import AutoCreate
-from autos import AutoNuevo, AutoUsado, AutoElectrico
-from services import ClienteService, EmpleadoService, MantenimientoService, FacturaService
-from schemas import MantenimientoCreate
+from services import (
+    ClienteService,
+    EmpleadoService,
+    MantenimientoService,
+    FacturaService,
+)
+from schemas import MantenimientoCreate, FacturaCreate
 from datetime import date
-
+from uuid import UUID
 
 
 class Concesionario:
+    """
+    Servicio principal de concesionario para gestionar autos, clientes, empleados,
+    ventas y mantenimientos.
+
+    Esta clase actúa como capa de negocio central, coordinando operaciones
+    entre servicios y el CRUD de autos.
+    """
+
     def __init__(self, db=None):
-        if db is None:
-            self.db = SessionLocal()
-        else:
-            self.db = db
+        """
+        Inicializa el concesionario con la sesión de base de datos y los servicios
+        relacionados.
+
+        Args:
+            db: Sesión de SQLAlchemy (opcional). Si no se proporciona, se crea una nueva.
+        """
+
+        self.db = db or SessionLocal()
         self.cliente_service = ClienteService(self.db)
         self.empleado_service = EmpleadoService(self.db)
         self.mantenimiento_service = MantenimientoService(self.db)
         self.factura_service = FacturaService(self.db)
 
-    def comprar_auto(self, auto):
+    def comprar_auto(self, auto, usuario_id: UUID | None = None):
+        """
+        Registra la compra de un auto y lo agrega a la base de datos.
+
+        Args:
+            auto: Objeto auto a registrar.
+            usuario_id (UUID | None): ID del usuario que realiza la compra.
+        """
+
         auto_schema = AutoCreate(
             marca=auto.marca,
             modelo=auto.modelo,
@@ -27,10 +52,17 @@ class Concesionario:
             tipo=auto.__class__.__name__,
             extra=str(getattr(auto, "kilometraje", getattr(auto, "autonomia", None))),
         )
-        auto_crud.crear_auto(self.db, auto_schema)
+        auto_crud.crear_auto(self.db, auto_schema, usuario_id)
         print(f"Se ha comprado: {auto.mostrar_info()}")
 
     def mostrar_autos(self):
+        """
+        Muestra en consola los autos disponibles para la venta.
+
+        Returns:
+            list: Lista de autos disponibles.
+        """
+
         autos = auto_crud.obtener_autos(self.db, disponibles_only=True)
         if not autos:
             print("No hay autos disponibles.")
@@ -40,6 +72,10 @@ class Concesionario:
         return autos
 
     def mostrar_autos_vendidos(self):
+        """
+        Muestra en consola los autos que ya han sido vendidos.
+        """
+
         autos = auto_crud.obtener_autos_vendidos(self.db)
         if not autos:
             print("No hay autos vendidos.")
@@ -48,7 +84,15 @@ class Concesionario:
         for a in autos:
             print(f"{a.id}. {a.marca} {a.modelo} ({a.tipo}) - ${a.precio}")
 
-    def vender_auto(self, indice: int):
+    def vender_auto(self, indice: int, usuario_id: UUID | None = None):
+        """
+        Vende un auto seleccionado, genera la factura y marca el auto como vendido.
+
+        Args:
+            indice (int): Índice del auto a vender (según listado disponible).
+            usuario_id (UUID | None): ID del usuario que realiza la venta.
+        """
+
         autos = auto_crud.obtener_autos(self.db, disponibles_only=True)
         if not (0 <= indice - 1 < len(autos)):
             print("Índice inválido, no se pudo vender el auto.")
@@ -59,97 +103,116 @@ class Concesionario:
 
         clientes = self.cliente_service.listar_clientes()
         if not clientes:
-            print(" No hay clientes registrados. Registre un cliente antes de vender.")
+            print("No hay clientes registrados. Registre un cliente antes de vender.")
             return
+
         print("\n--- CLIENTES ---")
-        for c in clientes:
-            print(f"{c.id}. {c.nombre} {c.apellido} - DNI: {c.dni}")
-        cliente_id = int(input("Ingrese el ID del cliente comprador: "))
-        if not any(c.id == cliente_id for c in clientes):
+        for i, c in enumerate(clientes, start=1):
+            print(f"{i}. {c.nombre} {c.apellido} - DNI: {c.dni}")
+
+        opcion_cliente = int(input("Ingrese el número del cliente comprador: "))
+        if not (1 <= opcion_cliente <= len(clientes)):
             print("Cliente inválido.")
             return
+        cliente = clientes[opcion_cliente - 1]
 
         vendedores = self.empleado_service.listar_vendedores()
         if not vendedores:
-            print(
-                " No hay vendedores registrados. Registre un vendedor antes de vender."
-            )
+            print("No hay vendedores registrados.")
             return
 
         empleados = self.empleado_service.listar_empleados()
         emp_map = {e.id: e for e in empleados}
 
         print("\n--- VENDEDORES ---")
-        for v in vendedores:
+        vendedores_validos = []
+        for i, v in enumerate(vendedores, start=1):
             emp = emp_map.get(v.empleado_id)
             if emp:
-                print(f"{v.empleado_id}. {emp.nombre} {emp.apellido}")
-            else:
-                print(f"{v.empleado_id}. (Empleado ID {v.empleado_id})")
+                vendedores_validos.append(v)
+                print(f"{i}. {emp.nombre} {emp.apellido}")
 
-        vendedor_id = int(input("Ingrese el ID del vendedor: "))
-        if not any(v.empleado_id == vendedor_id for v in vendedores):
+        opcion_vendedor = int(input("Ingrese el número del vendedor: "))
+        if not (1 <= opcion_vendedor <= len(vendedores_validos)):
             print("Vendedor inválido.")
             return
+        vendedor = vendedores_validos[opcion_vendedor - 1]
+        vendedor_emp = emp_map.get(vendedor.empleado_id)
 
-        auto_crud.marcar_vendido(self.db, auto.id)
-        print(
-            f" Auto '{auto.marca} {auto.modelo}' marcado como vendido. Genere la factura desde el menú de facturas."
+        auto_crud.marcar_vendido(self.db, auto.id, usuario_id)
+
+        factura = self.factura_service.crear_factura(
+            FacturaCreate(
+                fecha_emision=date.today(),
+                cliente_id=cliente.id,
+                empleado_id=vendedor.empleado_id,
+                auto_id=auto.id,
+                precio_carro_base=auto.precio,
+                costo_mantenimiento=0.0,
+                descuento=0.0,
+                total=0.0,
+                observaciones="Factura generada automáticamente al vender el auto",
+            ),
+            usuario_id,
         )
 
-    def dar_mantenimiento(self, indice: int):
-        autos_all = auto_crud.obtener_autos(self.db, disponibles_only=False)
-        if not autos_all:
-            print("No hay autos registrados para mantenimiento.")
-            return
+        print("\n--- FACTURA GENERADA ---")
+        print(f"Factura ID: {factura.id}")
+        print(f"Fecha: {factura.fecha_emision}")
+        print(f"Cliente: {cliente.nombre} {cliente.apellido}")
+        print(f"Vendedor: {vendedor_emp.nombre} {vendedor_emp.apellido}")
+        print(f"Auto: {auto.marca} {auto.modelo} ({auto.tipo})")
+        print(f"Precio: ${auto.precio}")
+        print(f"Total: ${factura.total}")
 
+    def dar_mantenimiento(self, indice: int, usuario_id: UUID | None = None):
+        """
+        Registra un mantenimiento para un auto seleccionado con un técnico específico.
+
+        Args:
+            indice (int): Índice del auto a mantener (según listado completo).
+            usuario_id (UUID | None): ID del usuario que realiza el mantenimiento.
+        """
+        
+        autos_all = auto_crud.obtener_autos(self.db, disponibles_only=False)
         if not (0 <= indice - 1 < len(autos_all)):
             print("Índice inválido, no se pudo dar mantenimiento.")
             return
 
         auto_db = autos_all[indice - 1]
-        print(
-            f"Auto seleccionado: {auto_db.marca} {auto_db.modelo} (vendido={auto_db.vendido})"
-        )
+        print(f"Auto seleccionado: {auto_db.marca} {auto_db.modelo}")
 
         tecnicos = self.empleado_service.listar_tecnicos()
         if not tecnicos:
-            print(" No hay técnicos de mantenimiento registrados. Registre uno antes.")
+            print("No hay técnicos registrados.")
             return
 
         empleados = self.empleado_service.listar_empleados()
         emp_map = {e.id: e for e in empleados}
 
-        print("\n--- TÉCNICOS DISPONIBLES ---")
-        for t in tecnicos:
+        print("\n--- TÉCNICOS ---")
+        tecnicos_validos = []
+        for i, t in enumerate(tecnicos, start=1):
             emp = emp_map.get(t.empleado_id)
             if emp:
-                print(
-                    f"{t.empleado_id}. {emp.nombre} {emp.apellido} - Tipo: {t.tipo_carro}"
-                )
-            else:
-                print(
-                    f"{t.empleado_id}. (Empleado ID {t.empleado_id}) - Tipo: {t.tipo_carro}"
-                )
+                tecnicos_validos.append(t)
+                print(f"{i}. {emp.nombre} {emp.apellido} - {t.tipo_carro}")
 
-        tecnico_id = int(input("Ingrese el ID del técnico a asignar: "))
-        if not any(t.empleado_id == tecnico_id for t in tecnicos):
+        opcion_tecnico = int(input("Ingrese el número del técnico: "))
+        if not (1 <= opcion_tecnico <= len(tecnicos_validos)):
             print("Técnico inválido.")
             return
+        tecnico = tecnicos_validos[opcion_tecnico - 1]
 
         detalle = input("Detalle del mantenimiento: ")
-        costo = float(input("Costo del mantenimiento: "))
-        fecha = date.today()
+        costo = float(input("Costo: "))
 
         mant = MantenimientoCreate(
             auto_id=auto_db.id,
-            empleado_id=tecnico_id,
-            fecha=fecha,
+            empleado_id=tecnico.empleado_id,
+            fecha=date.today(),
             detalle=detalle,
             costo=costo,
-            factura_id=None,
         )
-        self.mantenimiento_service.registrar_mantenimiento(mant)
-        print(
-            f" Mantenimiento registrado para {auto_db.marca} {auto_db.modelo} (${costo})."
-        )
+        self.mantenimiento_service.registrar_mantenimiento(mant, usuario_id)
+        print(f"Mantenimiento registrado para {auto_db.marca} {auto_db.modelo}")
