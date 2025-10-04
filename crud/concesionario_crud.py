@@ -11,14 +11,20 @@ def crear_concesionario(
 ):
     """
     Crea un nuevo concesionario con los datos proporcionados.
-    :param db: Sesión activa de SQLAlchemy.
-    :param concesionario: Datos del concesionario a crear.
-    :param usuario_id: ID del usuario que crea el registro (opcional).
-    :return: Objeto Concesionario recién creado.
+
+    Args:
+        db (Session): Sesión activa de SQLAlchemy.
+        concesionario (ConcesionarioCreate): Datos del concesionario a crear.
+        usuario_id (UUID | None): ID del usuario que crea el registro (opcional).
+
+    Returns:
+        Concesionario: Objeto Concesionario recién creado.
     """
     db_concesionario = Concesionario(
         id=uuid.uuid4(),
-        **concesionario.dict(),
+        nombre=concesionario.nombre,
+        direccion=concesionario.direccion,
+        telefono=concesionario.telefono,
         id_usuario_creacion=usuario_id,
         fecha_creacion=datetime.utcnow(),
     )
@@ -31,7 +37,25 @@ def crear_concesionario(
 def obtener_concesionarios(db: Session):
     """
     Retorna todos los concesionarios registrados en la base de datos.
-    :param db: Sesión activa de SQLAlchemy.
-    :return: Lista de objetos Concesionario.
+
+    Args:
+        db (Session): Sesión activa de SQLAlchemy.
+
+    Returns:
+        list[Concesionario]: Lista de objetos Concesionario.
     """
     return db.query(Concesionario).all()
+
+
+def actualizar_concesionario(
+    db: Session, concesionario_id: UUID, concesionario: ConcesionarioCreate
+):
+    db_concesionario = (
+        db.query(Concesionario).filter(Concesionario.id == concesionario_id).first()
+    )
+    if db_concesionario:
+        for key, value in concesionario.dict().items():
+            setattr(db_concesionario, key, value)
+        db.commit()
+        db.refresh(db_concesionario)
+    return db_concesionario

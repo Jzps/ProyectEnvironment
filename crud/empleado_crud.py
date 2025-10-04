@@ -102,3 +102,21 @@ def obtener_tecnicos(db: Session):
     :return: Lista de objetos EmpleadoMantenimiento.
     """
     return db.query(EmpleadoMantenimiento).all()
+
+
+def actualizar_empleado(db: Session, empleado_id: UUID, empleado: EmpleadoCreate):
+    db_empleado = db.query(Empleado).filter(Empleado.id == empleado_id).first()
+    if db_empleado:
+        for key, value in empleado.dict().items():
+            setattr(db_empleado, key, value)
+        db.commit()
+        db.refresh(db_empleado)
+    return db_empleado
+
+
+def eliminar_empleado(db: Session, empleado_id: UUID):
+    empleado = db.query(Empleado).filter(Empleado.id == empleado_id).first()
+    if empleado:
+        db.delete(empleado)
+        db.commit()
+    return empleado
