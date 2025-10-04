@@ -7,11 +7,8 @@ from database.base import Base
 
 class Mantenimiento(Base):
     """
-    Modelo ORM para la tabla ``mantenimientos``.
-
-    Registra los mantenimientos realizados a un automóvil, indicando
-    el técnico responsable, costos asociados y su posible vínculo
-    con una factura.
+    Modelo ORM para la tabla `mantenimientos`.
+    Registra los mantenimientos realizados a un automóvil.
     """
 
     __tablename__ = "mantenimientos"
@@ -29,10 +26,10 @@ class Mantenimiento(Base):
         ForeignKey("empleados_mantenimiento.empleado_id"),
         nullable=False,
     )
+    cliente_id = Column(UUID(as_uuid=True), ForeignKey("clientes.id"), nullable=False)
     fecha = Column(Date, nullable=False)
     detalle = Column(String, nullable=False)
     costo = Column(Float, nullable=False)
-    factura_id = Column(UUID(as_uuid=True), ForeignKey("facturas.id"), nullable=True)
 
     id_usuario_creacion = Column(UUID(as_uuid=True), nullable=True)
     id_usuario_edicion = Column(UUID(as_uuid=True), nullable=True)

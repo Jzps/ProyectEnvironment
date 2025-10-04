@@ -47,3 +47,11 @@ def eliminar_factura(db: Session, factura_id: UUID):
         db.delete(factura)
         db.commit()
     return factura
+
+
+def eliminar_factura(db: Session, factura_id: UUID):
+    factura = db.query(Factura).filter(Factura.id == factura_id).first()
+    if factura:
+        db.delete(factura)
+        db.commit()
+    return factura

@@ -23,7 +23,7 @@ class Concesionario(Base):
         nullable=False,
     )
     nombre = Column(String, nullable=False)
-    ubicacion = Column(String, nullable=True)
+    direccion = Column(String, nullable=True)  # <-- cambiado de ubicacion a direccion
     telefono = Column(String, nullable=True)
 
     id_usuario_creacion = Column(UUID(as_uuid=True), nullable=True)

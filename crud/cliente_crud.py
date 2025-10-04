@@ -57,3 +57,13 @@ def eliminar_cliente(db: Session, cliente_id: UUID):
         db.delete(cliente)
         db.commit()
     return cliente
+
+
+def actualizar_cliente(db: Session, cliente_id: UUID, cliente: ClienteCreate):
+    db_cliente = db.query(Cliente).filter(Cliente.id == cliente_id).first()
+    if db_cliente:
+        for key, value in cliente.dict().items():
+            setattr(db_cliente, key, value)
+        db.commit()
+        db.refresh(db_cliente)
+    return db_cliente
