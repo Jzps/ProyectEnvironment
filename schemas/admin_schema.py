@@ -26,7 +26,4 @@ class AdminOut(BaseModel):
     fecha_creacion: datetime | None = None
     fecha_actualizacion: datetime | None = None
 
-    class Config:
-        """Permite crear el esquema desde objetos ORM."""
-
-        from_attributes = True
+    model_config = {"from_attributes": True}

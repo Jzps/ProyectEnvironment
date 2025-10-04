@@ -93,3 +93,13 @@ def obtener_autos_vendidos(db: Session):
     :return: Lista de autos vendidos.
     """
     return db.query(Auto).filter(Auto.vendido == True).all()
+
+
+def actualizar_auto(db: Session, auto_id: UUID, auto: AutoCreate):
+    db_auto = db.query(Auto).filter(Auto.id == auto_id).first()
+    if db_auto:
+        for key, value in auto.dict().items():
+            setattr(db_auto, key, value)
+        db.commit()
+        db.refresh(db_auto)
+    return db_auto

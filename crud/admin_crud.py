@@ -31,3 +31,11 @@ def obtener_admin(db: Session, username: str):
     Retorna el objeto Admin si existe, en caso contrario None.
     """
     return db.query(Admin).filter(Admin.username == username).first()
+
+
+def eliminar_admin(db: Session, admin_id: UUID):
+    admin = db.query(Admin).filter(Admin.id == admin_id).first()
+    if admin:
+        db.delete(admin)
+        db.commit()
+    return admin

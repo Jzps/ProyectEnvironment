@@ -6,7 +6,6 @@ from uuid import UUID
 class FacturaBase(BaseModel):
     """
     Modelo base de Factura.
-    Contiene datos comunes como fecha, cliente, empleado, auto, precios y observaciones.
     """
 
     fecha_emision: date
@@ -21,10 +20,7 @@ class FacturaBase(BaseModel):
 
 
 class FacturaCreate(FacturaBase):
-    """
-    Modelo de entrada para crear facturas.
-    Hereda de FacturaBase.
-    """
+    """Modelo de entrada para crear facturas."""
 
     pass
 
@@ -32,7 +28,6 @@ class FacturaCreate(FacturaBase):
 class FacturaOut(FacturaBase):
     """
     Modelo de salida para facturas.
-    Incluye id, usuarios de creación/edición y fechas de registro.
     """
 
     id: UUID
@@ -41,7 +36,4 @@ class FacturaOut(FacturaBase):
     fecha_creacion: datetime | None = None
     fecha_actualizacion: datetime | None = None
 
-    class Config:
-        """Permite la conversión desde objetos ORM."""
-
-        from_attributes = True
+    model_config = {"from_attributes": True}
