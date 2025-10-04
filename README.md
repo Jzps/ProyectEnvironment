@@ -1,18 +1,10 @@
-# ¡¡¡¡¡IMPORTANTE!!!!!
-
-Para que el sistema funcione correctamente:
-
-  **Iniciar sesión con el usuario administrador por defecto**  
-   - **USUARIO:** Usuario  
-   - **CONTRASEÑA:** 123  
-
 ---
 
-# 🚗 Concesionario de Autos en Python
+# 🚗 Concesionario de Autos en Python (con API FastAPI)
 
-Este proyecto es un **sistema de gestión para un concesionario de autos**, desarrollado en **Python** con **SQLAlchemy** y **PostgreSQL (NeonDB)**.
+Este proyecto es un **sistema completo de gestión para un concesionario de autos**, desarrollado en **Python** con **FastAPI**, **SQLAlchemy** y **PostgreSQL (NeonDB)**.
 
-Permite **registrar, vender, dar mantenimiento y administrar autos, clientes, empleados, facturas y mantenimientos** de forma estructurada.
+Permite **registrar, vender, dar mantenimiento y administrar autos, clientes, empleados, facturas y mantenimientos**, tanto desde consola como mediante **endpoints RESTful documentados con Swagger UI**.
 
 ---
 
@@ -21,8 +13,8 @@ Permite **registrar, vender, dar mantenimiento y administrar autos, clientes, em
 ```bash
 ProyectEnvironment/
 │── autos/                   # Clases que representan los distintos tipos de autos
-│   ├── base.py              # Clase base Auto
-│   ├── tipos.py             # Subclases: AutoNuevo, AutoUsado, AutoElectrico
+│   ├── base.py
+│   ├── tipos.py
 │
 │── crud/                    # Operaciones CRUD directas sobre la base de datos
 │   ├── admin_crud.py
@@ -59,9 +51,16 @@ ProyectEnvironment/
 │   ├── factura_service.py
 │   ├── mantenimiento_service.py
 │
-│── main.py                  # Menú principal (punto de entrada al sistema)
-│── reset_db.py              # Script opcional para reiniciar las tablas
-│── test_connection.py       # Script para probar conexión con la base de datos
+│── api/                     # Endpoints REST con FastAPI
+│   ├── admin_api.py
+│   ├── autos_api.py
+│   ├── clientes_api.py
+│   ├── empleados_api.py
+│   ├── mantenimientos_api.py
+│
+│── main.py                  # Menú principal en consola
+│── reset_db.py              # Script opcional para reiniciar tablas
+│── test_connection.py       # Prueba de conexión con la base de datos
 │── requirements.txt         # Dependencias necesarias
 │── README.md                # Documentación del proyecto
 ```
@@ -74,7 +73,7 @@ ProyectEnvironment/
 * **PostgreSQL** (se recomienda NeonDB en la nube)
 * Librerías listadas en `requirements.txt`
 
-Instala las dependencias con:
+Instala las dependencias:
 
 ```bash
 pip install -r requirements.txt
@@ -82,80 +81,53 @@ pip install -r requirements.txt
 
 ---
 
-## 🚀 Instalación y Ejecución
+## 🚀 Ejecución del Proyecto
 
-1. **Clonar el repositorio**
+### 🌐 Modo API (FastAPI)
 
-```bash
-git clone https://github.com/Jzps/ProyectEnvironment.git
-cd ProyectEnvironment
-```
+1. Levanta el servidor FastAPI:
 
-2. **Configurar la base de datos**
+   ```bash
+   uvicorn main:app --reload
+   ```
 
-En el archivo `.env` debes definir tu conexión a Neon o Postgres local. Ejemplo:
+2. Abre la documentación interactiva:
 
-```env
-DATABASE_URL=postgresql+psycopg2://usuario:contraseña@host/dbname
-```
+   ```
+   http://localhost:8000/docs
+   ```
 
-3. **Inicializar la base de datos**
+Ahí podrás probar todos los endpoints de:
 
-```bash
-python database/init_db.py
-```
+* `/admin`
+* `/autos`
+* `/clientes`
+* `/empleados`
+* `/mantenimientos`
+* `/facturas`
+* `/concesinarios`
 
-4. **Probar la conexión (opcional)**
-
-```bash
-python test_connection.py
-```
-
-5. **Ejecutar el programa**
-
-```bash
-python main.py
-```
+Cada uno incluye operaciones **GET, POST, PUT, DELETE** documentadas automáticamente.
 
 ---
 
-## 📖 Uso del Sistema
-
-### Menú Principal
-
-```text
-=== MENÚ PRINCIPAL ===
-1. Concesionario (Autos)
-2. Clientes
-3. Empleados
-4. Mantenimientos
-5. Salir
-```
-
-🔹 **Concesionario (Autos):** Comprar, vender, mostrar autos, registrar mantenimientos y listar autos vendidos.
-🔹 **Clientes:** Registrar, listar y eliminar clientes.
-🔹 **Empleados:** Registrar empleados, vendedores y técnicos de mantenimiento.
-🔹 **Mantenimientos:** Listar mantenimientos realizados.
-🔹 **Salir:** Termina el programa.
-
----
-
-## 📝 Lógica de Negocio
+## 🧠 Lógica de Negocio
 
 * **Autos:**
-  Representados por clases (`AutoNuevo`, `AutoUsado`, `AutoElectrico`), guardados en BD vía `auto_crud`.
+  Representados por clases (`AutoNuevo`, `AutoUsado`, `AutoElectrico`) y administrados vía `auto_crud`.
 
 * **Clientes y Empleados:**
-  Gestión completa con validación de datos (`cliente_service`, `empleado_service`).
+  Gestión completa con validación (`cliente_service`, `empleado_service`).
 
 * **Ventas:**
   Al vender un auto se marca como vendido y se **genera automáticamente una factura** con datos del cliente, vendedor y auto.
 
 * **Mantenimientos:**
-  Se asigna un técnico y se guarda el detalle y costo en la tabla correspondiente.
+  Se asigna un técnico y se guarda el detalle y costo.
+  En la versión actual, **ya no se requiere el `factura_id`** (se eliminó el campo de la tabla y del modelo para evitar errores al crear mantenimientos).
 
 * **Login de Administradores:**
-  El sistema incluye un **módulo de login** que permite validar credenciales antes de usar el sistema.
+  El sistema incluye un **módulo de login** que permite validar credenciales antes de usar el sistema o acceder al panel API.
 
 ---
 
@@ -168,6 +140,6 @@ python main.py
 
 ## 📜 Licencia
 
-Este proyecto puede ser usado y modificado con fines **educativos y personales**.
+Proyecto académico desarrollado con fines educativos.
 
 ---
