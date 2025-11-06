@@ -1,24 +1,9 @@
-"""
-Módulo principal de la API del Concesionario.
-
-Este archivo inicializa la aplicación FastAPI, configura la base de datos
-y registra los routers de las diferentes entidades del sistema:
-clientes, empleados, autos, administradores, concesionarios, facturas y mantenimientos.
-
-Ejecución
----------
-python main.py
-
-La documentación de la API estará disponible en:
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
-"""
-
 from datetime import datetime
 from typing import Dict
 
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from database import init_db
 from apis import (
@@ -43,15 +28,17 @@ app = FastAPI(
     version="1.0.0",
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/", response_model=Dict[str, str])
 async def root():
-    """
-    Endpoint raíz de la API.
-
-    Retorna un mensaje de bienvenida con información básica
-    y un enlace a la documentación.
-    """
     return {
         "mensaje": "Bienvenido a la API del Concesionario",
         "version": "1.0.0",
@@ -70,12 +57,6 @@ app.include_router(mantenimientos_router)
 
 @app.get("/estadisticas")
 async def estadisticas():
-    """
-    Obtener estadísticas generales de la API.
-
-    Actualmente retorna la fecha de consulta y un mensaje informativo.
-    Futuras versiones mostrarán métricas reales del sistema.
-    """
     return {
         "fecha_consulta": datetime.now().isoformat(),
         "info": "Próximamente: métricas reales de clientes, empleados, autos y mantenimientos",
