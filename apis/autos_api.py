@@ -16,10 +16,6 @@ router = APIRouter(
 
 
 def get_db():
-    """
-    Provee una sesión de base de datos activa.
-    Se usa como dependencia en los endpoints.
-    """
     db = SessionLocal()
     try:
         yield db
@@ -37,10 +33,6 @@ def comprar_auto(
     autonomia: int | None = None,
     db: Session = Depends(get_db),
 ):
-    """
-    Registra un nuevo auto en el concesionario.
-    Soporta autos nuevos, usados y eléctricos con sus atributos.
-    """
     concesionario = Concesionario(db)
     tipo_normalizado = tipo.lower()
 
@@ -73,20 +65,18 @@ def comprar_auto(
 
 @router.get("/", response_model=List[AutoOut])
 def listar_autos(db: Session = Depends(get_db)):
-    """
-    Lista todos los autos disponibles.
-    Solo muestra aquellos que no han sido vendidos.
-    """
     concesionario = Concesionario(db)
     return concesionario.mostrar_autos()
 
 
+@router.get("/vendidos", response_model=List[AutoOut])
+def listar_autos_vendidos(db: Session = Depends(get_db)):
+    concesionario = Concesionario(db)
+    return concesionario.mostrar_autos_vendidos()
+
+
 @router.get("/{auto_id}", response_model=AutoOut)
 def obtener_auto(auto_id: UUID, db: Session = Depends(get_db)):
-    """
-    Obtiene la información de un auto por su ID único.
-    Lanza un error 404 si no existe.
-    """
     auto = db.query(auto_crud.Auto).filter_by(id=auto_id).first()
     if not auto:
         raise HTTPException(status_code=404, detail="Auto no encontrado")
@@ -95,10 +85,6 @@ def obtener_auto(auto_id: UUID, db: Session = Depends(get_db)):
 
 @router.post("/vender/{auto_id}")
 def vender_auto(auto_id: UUID, db: Session = Depends(get_db)):
-    """
-    Marca un auto como vendido usando su ID.
-    Retorna la información básica del auto vendido.
-    """
     auto = auto_crud.marcar_vendido(db, auto_id)
     if not auto:
         raise HTTPException(status_code=404, detail="Auto no encontrado o ya vendido")
@@ -108,22 +94,8 @@ def vender_auto(auto_id: UUID, db: Session = Depends(get_db)):
     }
 
 
-@router.get("/vendidos", response_model=List[AutoOut])
-def listar_autos_vendidos(db: Session = Depends(get_db)):
-    """
-    Lista todos los autos ya vendidos.
-    Incluye su información completa.
-    """
-    concesionario = Concesionario(db)
-    return concesionario.mostrar_autos_vendidos()
-
-
 @router.put("/{auto_id}", response_model=AutoOut)
 def actualizar_auto(auto_id: UUID, auto: AutoCreate, db: Session = Depends(get_db)):
-    """
-    Actualiza los datos de un auto por su ID.
-    Si no existe, devuelve error 404.
-    """
     db_auto = auto_crud.actualizar_auto(db, auto_id, auto)
     if not db_auto:
         raise HTTPException(status_code=404, detail="Auto no encontrado")
@@ -132,10 +104,6 @@ def actualizar_auto(auto_id: UUID, auto: AutoCreate, db: Session = Depends(get_d
 
 @router.delete("/{auto_id}")
 def eliminar_auto(auto_id: UUID, db: Session = Depends(get_db)):
-    """
-    Elimina un auto del sistema usando su ID.
-    Devuelve confirmación si el auto existía.
-    """
     auto = auto_crud.eliminar_auto(db, auto_id)
     if not auto:
         raise HTTPException(status_code=404, detail="Auto no encontrado")
